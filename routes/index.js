@@ -38,7 +38,7 @@ router.get('/getText', function(req, res) {
     request.post({
       headers: {'content-type' : 'application/json'},
       url:     'https://api.mlab.com/api/1/databases/textinfo/collections/local?apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV',
-      body:    JSON.stringify({username: req.query.username || "LOL", selectedText: req.query.selectedText || "LOL LOL2 LOL", url: req.query.url || "LOL"})
+      body:    JSON.stringify({username: req.query.username, selectedText: req.query.selectedText, url: req.query.url})
     }, function(error, response, body){
         if(error) res.send(error)
         res.send(200)
@@ -61,7 +61,7 @@ router.get('/sendHighlights', function(req, res) {
         for(var i = 0; i < urlRecords.length; i++) {
             result[urlRecords[i].selectedText] = 1
             for(var j = i + 1; j < urlRecords.length; j++) {
-                console.log("Comparing " + urlRecords[i].selectedText  + " and " + urlRecords[j].selectedText)
+                console.log("Comparing " + urlRecords[i].selectedText  + " AND " + urlRecords[j].selectedText)
                 if(urlRecords[i].selectedText === urlRecords[j].selectedText) {
                     console.log("Matched!")
                     urlRecords.splice(j, 1)
@@ -86,7 +86,7 @@ router.get('/sendHighlights', function(req, res) {
             var record = urlRecords[i]
             for (var j = i + 1; j < urlRecords.length; j++) {
                 var otherRecord = urlRecords[j]
-                console.log("Comparing " + record.selectedText  + " and " + otherRecord.selectedText)
+                console.log("Comparing " + record.selectedText  + " AND " + otherRecord.selectedText)
                 if(record.selectedText.indexOf(otherRecord.selectedText) !== -1) {
                     console.log("Matched!")
                     result[record.selectedText]++
@@ -105,14 +105,17 @@ router.get('/sendHighlights', function(req, res) {
             var breaker = false
             for (var j = i + 1; j < urlRecords.length; j++) {
                 var otherRecord = urlRecords[j]
-                console.log("Comparing " + record.selectedText  + " and " + otherRecord.selectedText)
-                if(fuzz.token_set_ratio(record.selectedText, otherRecord.selectedText) > 55) {
+                console.log("Comparing " + record.selectedText  + " AND " + otherRecord.selectedText)
+                if(fuzz.ratio(record.selectedText, otherRecord.selectedText) > 60) {
+                    console.log("Fuzzy selected")
                     if(result[record.selectedText] > result[otherRecord.selectedText]) {
+                        console.log("Removing " + otherRecord.selectedText)
                         result[record.selectedText]++
                         result[otherRecord.selectedText] = undefined
                         urlRecords.splice(j, 1)
                         j--
                     } else {
+                        console.log("Removing " + record.selectedText)
                         result[otherRecord.selectedText]++
                         result[record.selectedText] = undefined
                         urlRecords.splice(i, 1)
@@ -127,7 +130,7 @@ router.get('/sendHighlights', function(req, res) {
         }
 
         console.log(result)
-        
+
         var final_result = []
         var ratio = 1
         for (var key in result) {
