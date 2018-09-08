@@ -1,0 +1,246 @@
+doctype html
+html
+  head
+    meta(name='viewport', content='initial-scale=1.0, user-scalable=no')
+    meta(http-equiv='refresh', content='60')
+    meta(charset='utf-8')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+    title Simple Polylines
+    style.
+      .c-error {
+        color: #c51244 !important;
+        border-radius: 0 !important;
+        position: relative; 
+        display: inline-block !important;
+      }
+      .c-button {
+        position: relative; 
+        padding:5px 15px; 
+        background:#ffa500; 
+        cursor:pointer;
+        -webkit-border-radius: 5px;
+        width: 100%;
+        height: 35px;
+        font-size: 18px;
+        border: #000000;
+        border-style: solid;
+        border-width: 2px;
+      }
+      /* Always set the map height explicitly to define the size of the div
+      * element that contains the map. */
+      #map {
+      height: 70%;
+      width: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+      height: 100%;
+      margin: 0px;
+      padding: 0;
+      }
+  script.
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => { 
+                                                  console.log('Ajax request started');
+                                                  var ajaxRequest = 
+                                                      $.ajax({
+                                                        type: "POST",
+                                                        url: "/get_coord",
+                                                        dataType: "json",
+                                                        data: {
+                                                            lat: position.coords.latitude,
+                                                            lng: position.coords.longitude
+                                                        }
+                                                      });
+                                                  $(document).ajaxComplete(function(event, request, settings) {
+                                                    console.log("Ajax request Sent");
+                                                  });
+                                                });
+    } else {
+        console.log('Your browser is out of fashion, there\'s no geolocation!');
+    }
+  body(style="background-color:#242f3e")
+    #map
+    script.
+      var yo = [#{chains_list}]
+      console.log(yo);
+      console.log("^Printed yo");
+      var wow = [#{nearby_users}]
+      // console.log(wow);
+      // This example creates a 2-pixel-wide red polyline showing the path of
+      // the first trans-Pacific flight between Oakland, CA, and Brisbane,
+      // Australia which was made by Charles Kingsford Smith.
+      function initMap() {
+      var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 17,
+      center: {lat: #{me.lat}, lng: #{me.lng}},
+      mapTypeId: 'terrain',
+      styles: [
+            {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
+            {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
+            {elementType: 'labels.text.fill', stylers: [{color: '#ffffff'}]}, //'#746855'}]},
+            {
+              featureType: 'administrative.locality',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'poi',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'poi.park',
+              elementType: 'geometry',
+              stylers: [{color: '#263c3f'}]
+            },
+            {
+              featureType: 'poi.park',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#6b9a76'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry',
+              stylers: [{color: '#38414e'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'geometry.stroke',
+              stylers: [{color: '#212a37'}]
+            },
+            {
+              featureType: 'road',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#9ca5b3'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry',
+              stylers: [{color: '#746855'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry.stroke',
+              stylers: [{color: '#1f2835'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#f3d19c'}]
+            },
+            {
+              featureType: 'transit',
+              elementType: 'geometry',
+              stylers: [{color: '#2f3948'}]
+            },
+            {
+              featureType: 'transit.station',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#d59563'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'geometry',
+              stylers: [{color: '#17263c'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#515c6d'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.stroke',
+              stylers: [{color: '#17263c'}]
+            }
+          ]
+      });
+
+      yo.forEach(function(this_chain) {
+        console.log(this_chain.color);
+        var chain1_list = this_chain.user_array.map(function(user) {
+          return {'lat': parseFloat(user.lat), 'lng': parseFloat(user.lng), 'username' : user.username};
+        });
+        console.log(chain1_list);
+        console.log("^Logged chain1_list");
+        var chain1 = new google.maps.Polyline({
+        path: chain1_list,
+        geodesic: true,
+        strokeColor: this_chain.color,
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+        });
+        chain1.setMap(map);
+        chain1_list.forEach(function(coord) {
+          if(coord.lat == '#{me.lat}' && coord.lng == '#{me.lng}') {
+            console.log("WOW");
+          }
+          else {
+            var image_red = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+            var marker = new google.maps.Marker({
+              position: {'lat': parseFloat(coord.lat), 'lng': parseFloat(coord.lng)},
+              map: map,
+              icon: image_red,
+              title: coord.username
+            });
+          }
+        });
+      });
+
+      var image_green = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+      wow.forEach(function(this_user) {
+        // console.log(this_user);
+        var marker = new google.maps.Marker({
+          position: {lat: this_user.lat, lng: this_user.lng},
+          map: map,
+          icon: image_green,
+          title: this_user.username
+          });
+      });
+
+      var image_me = 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
+      var meMarker = new google.maps.Marker({
+        position: {lat: #{me.lat}, lng: #{me.lng}},
+        map: map,
+        icon: image_me,
+        title: 'Me'
+      });
+
+      }
+    script(async='', defer='', src='https://maps.googleapis.com/maps/api/js?key=AIzaSyB5YKqBNhQ2DSXJYlVhj3Fr6b39X-NlWmA&callback=initMap')
+    script(src="/socket.io/socket.io.js")
+    script.
+        var socket = io();
+        function sendRefreshEvent() { 
+          console.log("Sent client event");
+          socket.emit('mapChanged', 'Sent an event from the client!');
+        }
+        socket.on('refreshAll', function(data) {
+          window.location.reload();
+          console.log(data);
+        });
+    if me.chain == "deleted"
+      h2(class="c-error")= 'Your chain got deleted. Sorry :( Better luck next time.'
+    br
+    if (!me.chain || me.chain == "deleted") && !me.inviteSent 
+      form(action='/create_chain', method='POST')
+        input(class="c-button" type='submit', value='Create chain', onclick="sendRefreshEvent()")
+    br
+    if me.chain && me.chain != "deleted" && !me.inviteSent
+      each user in nearby_users
+        if user 
+          form(action='/extend_chain', method='POST')
+            input(type='hidden', name='username', value=user.username)
+            input(class="c-button" type='submit', value='Extend to ' + user.username, onclick="sendRefreshEvent()")
+        br
+    if (!me.chain || me.chain == "deleted") && !me.inviteSent
+        if me.invites
+          each invite in me.invites
+            if invite
+            form(action='/join_chain', method='POST')
+              input(type='hidden', name='chain_color', value=invite)
+              input(class='c-button' type='submit', value='Join the ' + invite + ' chain' , onclick="sendRefreshEvent()")
+          br
+  
+          
