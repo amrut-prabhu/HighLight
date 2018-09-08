@@ -19,10 +19,21 @@ router.get('/signup', isNotLoggedIn, function(req, res, next) {
   res.render('signup', { title: 'Sign Up', message : req.flash('signupMessage') });
 });
 
+router.get('/joinGroup', function(req, res) {
+    User.findOne({'local.username':req.query.username}, function(err, user) {
+        user.local.groups.push(req.query.groupName)
+        user.save((err) => {
+            if(err) 
+                throw err;
+            else
+              res.send(200)
+        })
+    })
+})
+
 router.get('/logout', function(req, res) {
 
         User.findOne({ 'local.username' :  req.user.local.username }, function(err, user) {
-
             user.local.loggedIn = false;
             user.save((err) => {
                 if(err) 
@@ -45,14 +56,31 @@ router.get('/getText', function(req, res) {
     });
 });
 
+function getFriendList(username) {
+    User.findOne({'local.username': username })
+        .exec(function(err, user) {
+            var groups = user.local.groups
+            console.log(groups)
+            groups.forEach((group) => {
+                User.find({'local.groups': group})
+                    .exec((err, users) => {
+                        console.log(users)
+                        return users.map((user) => user.username)
+                    })
+            })
+        })
+}
+
 router.get('/sendHighlights', function(req, res) {
     console.log("Route reached")
-    var url = req.query.url || "https://en.wikipedia.org/wiki/Computer_programming"
+    var url = req.query.url
     request("https://api.mlab.com/api/1/databases/textinfo/collections/local?q={\"url\":\"" + encodeURIComponent(url) + "\"}&apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV", function (error, response, urlRecords) {
         // console.log(response)
         // console.log(body)
         urlRecords = JSON.parse(urlRecords);
         console.log(urlRecords)
+
+        var friendList = getFriendList()
 
         var result = []
 
@@ -64,9 +92,8 @@ router.get('/sendHighlights', function(req, res) {
                 console.log("Comparing " + urlRecords[i].selectedText  + " AND " + urlRecords[j].selectedText)
                 if(urlRecords[i].selectedText === urlRecords[j].selectedText) {
                     console.log("Matched!")
-                    urlRecords.splice(j, 1)
+                    urlRecords[j] = undefined
                     result[urlRecords[i].selectedText]++;
-                    j--
                 }
             }
             denom += result[urlRecords[i].selectedText]
@@ -143,7 +170,7 @@ router.get('/sendHighlights', function(req, res) {
                 if(result[key] >= ratio) {
                     ratio = result[key]
                 }                
-                final_result.push({"text": key, "matches": result[key]})
+                final_result.push({"text": key, "matches": result[key] || 1})
             }
         }
         for(var json of final_result) {
