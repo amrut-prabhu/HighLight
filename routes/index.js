@@ -22,13 +22,31 @@ router.get('/signup', isNotLoggedIn, function(req, res, next) {
 router.get('/joinGroup', function(req, res) {
     User.findOne({'local.username':req.query.username}, function(err, user) {
         user.local.groups.push(req.query.groupName)
-        user.save((err) => {
+        user.save((err, savedUser) => {
             if(err) 
                 throw err;
             else
-              res.send(200)
+                User.find({'local.groups': {$in: [req.query.groupName]}}, function(err, users) {
+                    console.log(users)
+                    users.forEach((user) => {
+                        console.log("User: " + user)
+                        if(user.local.username !== savedUser.local.username) {
+                            user.local.friends.push(savedUser.local.username)
+                            console.log("User after adding friend: " + user)
+                            user.save((err, savedUser2) => {
+                                savedUser.local.friends.push(savedUser2.local.username)
+                                console.log(savedUser)
+                                savedUser.save((err) => {
+                                    if(err)
+                                        throw err
+                                    res.send()  
+                                })
+                            })
+                        }
+                    })
+                })
+            })
         })
-    })
 })
 
 router.get('/logout', function(req, res) {
@@ -57,18 +75,10 @@ router.get('/getText', function(req, res) {
 });
 
 function getFriendList(username) {
-    User.findOne({'local.username': username })
-        .exec(function(err, user) {
-            var groups = user.local.groups
-            console.log(groups)
-            groups.forEach((group) => {
-                User.find({'local.groups': group})
-                    .exec((err, users) => {
-                        console.log(users)
-                        return users.map((user) => user.username)
-                    })
-            })
-        })
+    User.findOne({'local.username': username }, 'local.friends', (err, res) => {
+        console.log(res.local.friends)
+        return res
+    })     
 }
 
 router.get('/sendHighlights', function(req, res) {
@@ -80,7 +90,8 @@ router.get('/sendHighlights', function(req, res) {
         urlRecords = JSON.parse(urlRecords);
         console.log(urlRecords)
 
-        var friendList = [] //getFriendList() || []
+        var friendList = getFriendList(req.query.username) || []
+        console.log("FriendList: " + friendList)
 
         var result = []
 
@@ -157,7 +168,15 @@ router.get('/sendHighlights', function(req, res) {
                 console.log("Comparing " + record.selectedText  + " AND " + otherRecord.selectedText)
                 if(fuzz.ratio(record.selectedText.trim(), otherRecord.selectedText.trim()) > 50) {
                     console.log("Fuzzy selected")
-                    if(result[record.selectedText] > result[otherRecord.selectedText]) {
+                    if(friendList.indexOf(urlRecords[j].username) !== -1) {
+                        urlRecords[i] = undefined
+                        result[urlRecords[j].selectedText]++;
+                        result[record.selectedText] = undefined
+                    } else if(friendList.indexOf(urlRecords[i].username) !== -1) {
+                        urlRecords[j] = undefined
+                        result[urlRecords[i].selectedText]++;
+                        result[otherRecord.selectedText] = undefined
+                    } else if(result[record.selectedText] > result[otherRecord.selectedText]) {
                         console.log("Removing " + otherRecord.selectedText)
                         result[record.selectedText]++
                         result[otherRecord.selectedText] = undefined

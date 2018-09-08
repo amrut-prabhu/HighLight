@@ -10,7 +10,8 @@ var userSchema = mongoose.Schema({
         username     : String,
         password     : String,
         loggedIn     : Boolean,
-        groups		 : Array
+        groups		 : Array,
+        friends		 : Array
         
     }
 
