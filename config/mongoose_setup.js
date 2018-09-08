@@ -26,7 +26,7 @@ userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.local.password);
 };
 
-userSchema.path('username').validate(function(value, done) {
+userSchema.path('local.username').validate(function(value, done) {
     this.model('User').count({ username: value }, function(err, count) {
         if (err) {
             return done(err);
