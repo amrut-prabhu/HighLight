@@ -33,19 +33,19 @@ router.get('/logout', function(req, res) {
         });
     });
 
-router.post('/getText', function(req, res) {
+router.get('/getText', function(req, res) {
     request.post({
       headers: {'content-type' : 'application/json'},
       url:     'https://api.mlab.com/api/1/databases/textinfo/collections/local?apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV',
-      body:    JSON.stringify({username: req.username || "LOL", selectedText: req.selectedText || "LOL LOL2 LOL", url: "LOL"})
+      body:    JSON.stringify({username: req.query.username || "LOL", selectedText: req.query.selectedText || "LOL LOL2 LOL", url: req.query.url || "LOL"})
     }, function(error, response, body){
       console.log(body);
     });
 });
 
-router.post('/sendHighlights', function(req, res) {
+router.get('/sendHighlights', function(req, res) {
     console.log("Route reached")
-    var url = "https://en.wikipedia.org/wiki/Computer_programming" // req.url
+    var url = req.query.url || "https://en.wikipedia.org/wiki/Computer_programming"
     request("https://api.mlab.com/api/1/databases/textinfo/collections/local?q={\"url\":\"" + encodeURIComponent(url) + "\"}&apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV", function (error, res, urlRecords) {
         // console.log(response)
         // console.log(body)
@@ -65,8 +65,10 @@ router.post('/sendHighlights', function(req, res) {
             }
             result.push({text: record.selectedText, matches: matches})
         }
-        console.log(result)
-        return result;
+        result = result.filter(function(elem, pos) {
+            return result.indexOf(elem) == pos;
+        })
+
     })
 })  
 
