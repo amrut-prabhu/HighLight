@@ -64,14 +64,21 @@ router.get('/logout', function(req, res) {
     });
 
 router.get('/createUser', function(req, res) {
-    request.post({
-      headers: {'content-type' : 'application/json'},
-      url:     'https://api.mlab.com/api/1/databases/textinfo/collections/users?apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV',
-      body:    JSON.stringify({username: req.query.username, groups: [], friends: []})
-    }, function(error, response, body){
-        if(error) res.send(error)
-        res.send(200)
-    });
+    User.findOne({'local.username': req.query.username}, 'local.username', (err, user) => {
+        console.log(user)
+        if(!user) {
+            request.post({
+              headers: {'content-type' : 'application/json'},
+              url:     'https://api.mlab.com/api/1/databases/textinfo/collections/users?apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV',
+              body:    JSON.stringify({username: req.query.username, groups: [], friends: []})
+            }, function(error, response, body){
+                if(error) res.send(error)
+                res.send(200)
+            });
+        } else {
+            res.send("User already existed")
+        }
+    })
 })
 
 router.get('/getText', function(req, res) {
@@ -88,7 +95,7 @@ router.get('/getText', function(req, res) {
 function getFriendList(username) {
     User.findOne({'local.username': username }, 'local.friends', (err, res) => {
         console.log(res.local.friends)
-        return res
+        return res.local.friends
     })     
 }
 
@@ -111,7 +118,7 @@ router.get('/sendHighlights', function(req, res) {
         for(var i = 0; i < urlRecords.length; i++) {
             if(urlRecords[i] == undefined)
                 continue
-            result[urlRecords[i].selectedText] = 1
+            result[urlRecords[i].selectedText] = {"matches" : 1, "friendMatches" : 0}
             for(var j = i + 1; j < urlRecords.length; j++) {
                 if(urlRecords[j] == undefined)
                     continue
@@ -120,21 +127,25 @@ router.get('/sendHighlights', function(req, res) {
                     console.log("Matched!")
                     if(friendList.indexOf(urlRecords[j].username) !== -1) {
                         urlRecords[i] = undefined
-                        result[urlRecords[j].selectedText]++;
+                        result[urlRecords[j].selectedText].matches++;
+                        result[urlRecords[j].selectedText].friendMatches++;
                     } else {
                         urlRecords[j] = undefined
-                        result[urlRecords[i].selectedText]++;
+                        result[urlRecords[i].selectedText].matches++;
+                        if(friendList.indexOf(urlRecords[i].username) !== -1) {
+                            result[urlRecords[i].selectedText].friendMatches++;
+                        }
                     }
                 }
             }
-            denom += result[urlRecords[i].selectedText]
+            denom += result[urlRecords[i].selectedText].matches
         }
 
         var threshold = Math.floor(0.1 * denom)
         console.log(denom)
         for (var key in result) {
             console.log(key)
-            result[key] = result[key] > threshold ? result[key] : undefined
+            result[key] = result[key].matches > threshold ? result[key] : undefined
         }
 
         console.log(result)
@@ -153,11 +164,15 @@ router.get('/sendHighlights', function(req, res) {
                     console.log("Matched!")
                     if(friendList.indexOf(urlRecords[j].username) !== -1) {
                         urlRecords[i] = undefined
-                        result[urlRecords[j].selectedText]++;
+                        result[urlRecords[j].selectedText].matches++;
+                        result[urlRecords[j].selectedText].friendMatches++;
                         result[record.selectedText] = undefined
                     } else {
                         urlRecords[j] = undefined
-                        result[urlRecords[i].selectedText]++;
+                        result[urlRecords[i].selectedText].matches++;
+                        if(friendList.indexOf(urlRecords[i].username) !== -1) {
+                            result[urlRecords[i].selectedText].friendMatches++;
+                        }
                         result[otherRecord.selectedText] = undefined
                     }
                 }
@@ -181,20 +196,22 @@ router.get('/sendHighlights', function(req, res) {
                     console.log("Fuzzy selected")
                     if(friendList.indexOf(urlRecords[j].username) !== -1) {
                         urlRecords[i] = undefined
-                        result[urlRecords[j].selectedText]++;
+                        result[urlRecords[j].selectedText].matches++;
+                        result[urlRecords[j].selectedText].friendMatches++;
                         result[record.selectedText] = undefined
                     } else if(friendList.indexOf(urlRecords[i].username) !== -1) {
                         urlRecords[j] = undefined
-                        result[urlRecords[i].selectedText]++;
+                        result[urlRecords[i].selectedText].matches++;
+                        result[urlRecords[i].selectedText].friendMatches++;
                         result[otherRecord.selectedText] = undefined
                     } else if(result[record.selectedText] > result[otherRecord.selectedText]) {
                         console.log("Removing " + otherRecord.selectedText)
-                        result[record.selectedText]++
+                        result[record.selectedText].matches++
                         result[otherRecord.selectedText] = undefined
                         urlRecords[j] = undefined
                     } else {
                         console.log("Removing " + record.selectedText)
-                        result[otherRecord.selectedText]++
+                        result[otherRecord.selectedText].matches++
                         result[record.selectedText] = undefined
                         urlRecords[i] = undefined
                         breaker = true
@@ -215,7 +232,7 @@ router.get('/sendHighlights', function(req, res) {
                 if(result[key] >= ratio) {
                     ratio = result[key]
                 }                
-                final_result.push({"text": key, "matches": result[key] || 1})
+                final_result.push({"text": key, "matches": result[key].matches || 1, "friendMatches": result[key].friendMatches || 1})
             }
         }
         for(var json of final_result) {
