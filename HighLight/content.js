@@ -5,7 +5,6 @@
 */
 const HEROKU_APP = "https://fbhackbackend.herokuapp.com";
 const URL_GET_PARAMETER = "/sendHighlights?url=";
-
 const USERNAME_PARAMETER = "/getText?username=";
 const SELECTED_TEXT_PARAMETER = "&selectedText=";
 const URL_POST_PARAMETER = "&url=";
