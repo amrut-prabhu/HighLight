@@ -13,7 +13,9 @@ const URL_POST_PARAMETER = "&url=";
 
 // Highlight constants
 const NORMALISATION_VALUE = 25;
-const HIGHLIGHT_COLOURS = ["#F7F7B9", "#FFFF3D", "#FCC691", "#FA8C1E", "#F76363"];
+const HIGHLIGHT_COLORS = ["#F7F7B9", "#FFFF3D", "#FCC691", "#FA8C1E", "#F76363"];
+
+const selectedTextSet = new Set();
 
 var testUserName = "test";
 
@@ -54,8 +56,11 @@ function getSelectedText() {
  */
 function sendSelectionText() {
     var selectedText = getSelectedText();
-    if (selectedText) {
+
+    if (selectedText && !selectedTextSet.has(selectedText)) {
         console.log("Selected: " + selectedText);
+        selectedTextSet.add(selectedText);
+
         var currUrl = window.location.href;
         var response = getFromServer(HEROKU_APP + USERNAME_PARAMETER + testUserName
             + SELECTED_TEXT_PARAMETER + selectedText + URL_POST_PARAMETER + currUrl);
@@ -76,7 +81,7 @@ function sendSelectionText() {
  */
 function getIntensityColor(intensity) {
     var intensityLevel = Math.floor(intensity / NORMALISATION_VALUE);
-    return HIGHLIGHT_COLOURS[intensityLevel];
+    return HIGHLIGHT_COLORS[intensityLevel];
 }
 
 /**
