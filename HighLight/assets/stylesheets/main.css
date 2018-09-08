@@ -1,0 +1,25 @@
+/*
+  ========================================
+  Highlight Intensities according to importance
+  ========================================
+*/
+.highlight-imp1 {
+    background:  rgba(255, 255, 0, 0.2)
+}
+
+.highlight-imp2 {
+    background:  rgba(255, 255, 0, 0.3)
+}
+
+.highlight-imp3 {
+    background:  rgba(255, 255, 0, 0.4)
+}
+
+.highlight-imp4 {
+    background:  rgba(255, 255, 0, 0.55)
+}
+
+.highlight-imp5 {
+    background:  rgba(255, 255, 0, 0.85)
+}
+
