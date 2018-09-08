@@ -1,0 +1,25 @@
+{
+  "name": "Fb-hack extension",
+  "description" : "Community-driven Highlights",
+  "version": "1.0",
+  "manifest_version": 2,
+  "browser_action" : {
+    "default_popup": "about_us.html",
+    "default_icon": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*.wikipedia.com/*"],
+      "js": ["script.js"]
+    }
+  ],
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "MacCtrl+Shift+5"
+      },
+      "description": "Opens hello.html"
+    }
+  }
+}
