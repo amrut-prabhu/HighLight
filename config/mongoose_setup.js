@@ -9,11 +9,12 @@ var userSchema = mongoose.Schema({
     local            : {
         username     : String,
         password     : String,
-        loggedIn     : Boolean
+        loggedIn     : Boolean,
+        groups		 : Array
         
     }
 
-});
+}, { usePushEach: true });
 
 // methods ======================
 // generating a hash

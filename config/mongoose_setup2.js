@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var textInfoSchema = mongoose.Schema({
     username : String,
     selectedText   : String,
-    url	   : String
+    url	   : String,
 });
 
 // methods ======================
