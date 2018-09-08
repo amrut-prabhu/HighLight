@@ -72,122 +72,128 @@ function getFriendList(username) {
 }
 
 router.get('/sendHighlights', function(req, res) {
-    console.log("Route reached")
-    var url = req.query.url
-    request("https://api.mlab.com/api/1/databases/textinfo/collections/local?q={\"url\":\"" + encodeURIComponent(url) + "\"}&apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV", function (error, response, urlRecords) {
-        // console.log(response)
-        // console.log(body)
-        urlRecords = JSON.parse(urlRecords);
-        console.log(urlRecords)
+    // console.log("Route reached")
+    // var url = req.query.url
+    // request("https://api.mlab.com/api/1/databases/textinfo/collections/local?q={\"url\":\"" + encodeURIComponent(url) + "\"}&apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV", function (error, response, urlRecords) {
+    //     // console.log(response)
+    //     // console.log(body)
+    //     urlRecords = JSON.parse(urlRecords);
+    //     console.log(urlRecords)
 
-        var friendList = getFriendList()
+    //     var friendList = getFriendList()
 
-        var result = []
+    //     var result = []
 
-        console.log("Filtering");
-        var denom = 0
-        for(var i = 0; i < urlRecords.length; i++) {
-            if(urlRecords[i] == undefined)
-                continue
-            result[urlRecords[i].selectedText] = 1
-            for(var j = i + 1; j < urlRecords.length; j++) {
-                if(urlRecords[j] == undefined)
-                    continue
-                console.log("Comparing " + urlRecords[i].selectedText  + " AND " + urlRecords[j].selectedText)
-                if(urlRecords[i].selectedText === urlRecords[j].selectedText) {
-                    console.log("Matched!")
-                    // if(friendList.indexOf(urlRecords[j].username) !== -1) {
-                    //     urlRecords[i] = undefined
-                    //     result[urlRecords[j].selectedText]++;
-                    // } else {
-                        urlRecords[j] = undefined
-                        result[urlRecords[i].selectedText]++;
-                    // }
-                }
-            }
-            denom += result[urlRecords[i].selectedText]
-        }
+    //     console.log("Filtering");
+    //     var denom = 0
+    //     for(var i = 0; i < urlRecords.length; i++) {
+    //         if(urlRecords[i] == undefined)
+    //             continue
+    //         result[urlRecords[i].selectedText] = 1
+    //         for(var j = i + 1; j < urlRecords.length; j++) {
+    //             if(urlRecords[j] == undefined)
+    //                 continue
+    //             console.log("Comparing " + urlRecords[i].selectedText  + " AND " + urlRecords[j].selectedText)
+    //             if(urlRecords[i].selectedText === urlRecords[j].selectedText) {
+    //                 console.log("Matched!")
+    //                 if(friendList.indexOf(urlRecords[j].username) !== -1) {
+    //                     urlRecords[i] = undefined
+    //                     result[urlRecords[j].selectedText]++;
+    //                 } else {
+    //                     urlRecords[j] = undefined
+    //                     result[urlRecords[i].selectedText]++;
+    //                 }
+    //             }
+    //         }
+    //         denom += result[urlRecords[i].selectedText]
+    //     }
 
-        var threshold = Math.floor(0.1 * denom)
-        console.log(denom)
-        for (var key in result) {
-            console.log(key)
-            result[key] = result[key] > threshold ? result[key] : undefined
-        }
+    //     var threshold = Math.floor(0.1 * denom)
+    //     console.log(denom)
+    //     for (var key in result) {
+    //         console.log(key)
+    //         result[key] = result[key] > threshold ? result[key] : undefined
+    //     }
 
-        console.log(result)
+    //     console.log(result)
 
-        console.log("Eliminating substrings")
-        for(var i = 0; i < urlRecords.length; i++) {
-            var record = urlRecords[i]
-            if(record === undefined)
-                continue
-            for (var j = 0; j < urlRecords.length; j++) {
-                var otherRecord = urlRecords[j]
-                if(otherRecord === undefined)
-                    continue
-                console.log("Comparing " + record.selectedText  + " AND " + otherRecord.selectedText)
-                if(record.selectedText.indexOf(otherRecord.selectedText.trim()) !== -1 && i !== j) {
-                    console.log("Matched!")
-                    result[record.selectedText]++
-                    result[otherRecord.selectedText] = undefined
-                    urlRecords[j] = undefined
-                }
-            }
-        }
+    //     console.log("Eliminating substrings")
+    //     for(var i = 0; i < urlRecords.length; i++) {
+    //         var record = urlRecords[i]
+    //         if(record === undefined)
+    //             continue
+    //         for (var j = 0; j < urlRecords.length; j++) {
+    //             var otherRecord = urlRecords[j]
+    //             if(otherRecord === undefined)
+    //                 continue
+    //             console.log("Comparing " + record.selectedText  + " AND " + otherRecord.selectedText)
+    //             if(record.selectedText.indexOf(otherRecord.selectedText.trim()) !== -1 && i !== j) {
+    //                 console.log("Matched!")
+    //                 if(friendList.indexOf(urlRecords[j].username) !== -1) {
+    //                     urlRecords[i] = undefined
+    //                     result[urlRecords[j].selectedText]++;
+    //                     result[record.selectedText] = undefined
+    //                 } else {
+    //                     urlRecords[j] = undefined
+    //                     result[urlRecords[i].selectedText]++;
+    //                     result[otherRecord.selectedText] = undefined
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        console.log(result)
+    //     console.log(result)
 
-        console.log("Intersection")
-        for(var i = 0; i < urlRecords.length; i++) {
-            var record = urlRecords[i]
-            var breaker = false
-            if(record === undefined)
-                continue
-            for (var j = i + 1; j < urlRecords.length; j++) {
-                var otherRecord = urlRecords[j]
-                if(otherRecord === undefined)
-                    continue
-                console.log("Comparing " + record.selectedText  + " AND " + otherRecord.selectedText)
-                if(fuzz.ratio(record.selectedText.trim(), otherRecord.selectedText.trim()) > 50) {
-                    console.log("Fuzzy selected")
-                    if(result[record.selectedText] > result[otherRecord.selectedText]) {
-                        console.log("Removing " + otherRecord.selectedText)
-                        result[record.selectedText]++
-                        result[otherRecord.selectedText] = undefined
-                        urlRecords[j] = undefined
-                    } else {
-                        console.log("Removing " + record.selectedText)
-                        result[otherRecord.selectedText]++
-                        result[record.selectedText] = undefined
-                        urlRecords[i] = undefined
-                        breaker = true
-                    }
-                }
-                if(breaker) {
-                    break
-                }
-            }
-        }
+    //     console.log("Intersection")
+    //     for(var i = 0; i < urlRecords.length; i++) {
+    //         var record = urlRecords[i]
+    //         var breaker = false
+    //         if(record === undefined)
+    //             continue
+    //         for (var j = i + 1; j < urlRecords.length; j++) {
+    //             var otherRecord = urlRecords[j]
+    //             if(otherRecord === undefined)
+    //                 continue
+    //             console.log("Comparing " + record.selectedText  + " AND " + otherRecord.selectedText)
+    //             if(fuzz.ratio(record.selectedText.trim(), otherRecord.selectedText.trim()) > 50) {
+    //                 console.log("Fuzzy selected")
+    //                 if(result[record.selectedText] > result[otherRecord.selectedText]) {
+    //                     console.log("Removing " + otherRecord.selectedText)
+    //                     result[record.selectedText]++
+    //                     result[otherRecord.selectedText] = undefined
+    //                     urlRecords[j] = undefined
+    //                 } else {
+    //                     console.log("Removing " + record.selectedText)
+    //                     result[otherRecord.selectedText]++
+    //                     result[record.selectedText] = undefined
+    //                     urlRecords[i] = undefined
+    //                     breaker = true
+    //                 }
+    //             }
+    //             if(breaker) {
+    //                 break
+    //             }
+    //         }
+    //     }
 
-        console.log(result)
+    //     console.log(result)
 
-        var final_result = []
-        var ratio = 1
-        for (var key in result) {
-            if (result[key] !== undefined) {
-                if(result[key] >= ratio) {
-                    ratio = result[key]
-                }                
-                final_result.push({"text": key, "matches": result[key] || 1})
-            }
-        }
-        for(var json of final_result) {
-            json.intensity = json.matches / ratio
-        }
-        console.log(final_result)
-        res.send(final_result)
-    })
+    //     var final_result = []
+    //     var ratio = 1
+    //     for (var key in result) {
+    //         if (result[key] !== undefined) {
+    //             if(result[key] >= ratio) {
+    //                 ratio = result[key]
+    //             }                
+    //             final_result.push({"text": key, "matches": result[key] || 1})
+    //         }
+    //     }
+    //     for(var json of final_result) {
+    //         json.intensity = json.matches / ratio
+    //     }
+    //     console.log(final_result)
+    //     res.send(final_result)
+    // })
 }) 
 
 
