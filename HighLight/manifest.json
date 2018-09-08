@@ -27,6 +27,9 @@
         "css": ["assets/stylesheets/main.css"],
         "run_at": "document_end"
         }
+    ],
+    "permissions": [
+        "https://fbhackbackend.herokuapp.com/*"
     ]
 }
 

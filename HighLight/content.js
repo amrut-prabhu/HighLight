@@ -1,36 +1,72 @@
-// Test URL:
-// https://www.google.com.sg/search?rlz=1C1CHWA_enAE610AE610&ei=JJ6TW5XMLcr6vASbwo2gDg&q=chrome+extension+development&oq=ch&gs_l=psy-ab.3.0.35i39k1l2j0i67k1j0i20i263k1j0i131k1l2j0i20i263k1j0i131k1l2j0.102472.102632.0.103697.2.2.0.0.0.0.57.108.2.2.0....0...1c.1.64.psy-ab..0.2.107....0.EalnqmHrA8w
+/*
+  ========================================
+  Constants
+  ========================================
+*/
+const HEROKU_APP = "https://fbhackbackend.herokuapp.com";
 
-var textObjects = [];
+const USERNAME_PARAMETER = "/getText?username=";
+const SELECTED_TEXT_PARAMETER = ",selectedText=";
+var testUserName = "test";
 
-var textObj1 = {
-    text: " with - HTML, CSS, and ",
-    intensity: 1
-}
-var textObj2 = {
-    text: "chrome://extensio",
-    intensity: 2
-}
-var textObj3 = {
-    text: "ery Chrome API but canno",
-    intensity: 3
-}
-var textObj4 = {
-    text: "create a Chrome extension",
-    intensity: 4
-}
-var textObj5 = {
-    text: "customize an extension.",
-    intensity: 5
+/*
+  ========================================
+  Function Calls
+  ========================================
+*/
+
+getTextsToHighlight();
+
+document.onmouseup = sendSelectionText;
+
+
+/*
+  ========================================
+  Sending Selected Text functions
+  ========================================
+*/
+
+/**
+ * Returns the text that is currently selected on the webpage.
+ */
+function getSelectedText() {
+    var text = "";
+    if (typeof window.getSelection != "undefined") {
+        text = window.getSelection().toString();
+    } else if (typeof document.selection != "undefined" && document.selection.type == "Text") {
+        text = document.selection.createRange().text;
+    }
+    return text;
 }
 
-textObjects.push(textObj1);
-textObjects.push(textObj2);
-textObjects.push(textObj3);
-textObjects.push(textObj4);
-textObjects.push(textObj5);
+/**
+ * Sends the selected text to the server .
+ */
+function sendSelectionText() {
+    var selectedText = getSelectedText();
+    if (selectedText) {
+        console.log("Selected: " + selectedText);
+        var response = getFromServer(HEROKU_APP + USERNAME_PARAMETER + testUserName + SELECTED_TEXT_PARAMETER + selectedText);
+        // response == "200 OK"
+    }
+}
 
-highlightTexts(textObjects);
+
+/*
+  ========================================
+  Highlighting Text functions
+  ========================================
+*/
+
+const URL_PARAMETER = "?par=";
+
+/**
+ * {@param Integer} intensity Intensity of the highlight
+ * {@return String} String representing a Hexadecimal colour value
+ */
+function getIntensityColour(intensity) {
+    return "yellow";
+}
 
 /**
  * {@param String} text Text to be highlighted
@@ -47,14 +83,6 @@ function highlight(text, intensity) {
 }
 
 /**
- * {@param Integer} intensity Intensity of the highlight
- * {@return String} String representing a Hexadecimal colour value
- */
-function getIntensityColour(intensity) {
-    return "yellow";
-}
-
-/**
  * {@param Array} textObjects Array of objects. Each object is {text: ... , intensity: ...}. Intensity should be [1,5].
  */
 function highlightTexts(textObjects) {
@@ -68,4 +96,36 @@ function highlightTexts(textObjects) {
     // Clean up
     document.designMode = "off";
     scroll(0,0);
+}
+
+/**
+ * API request to get the text to highlight on the current webpage
+ */
+function getTextsToHighlight() {
+    var currUrl = window.location.href;
+    var response = getFromServer(HEROKU_APP + URL_PARAMETER + currUrl);
+
+    var textObjects;
+    // highlightTexts(textObjects);
+}
+
+/*
+  ========================================
+  API calls to Heroku server
+  ========================================
+*/
+
+/**
+ * {@param String} url URL to which the request is to be sent.
+ * {@return String} Returns response from server
+ */
+function getFromServer(url) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("GET", url, false);
+    xhr.send();
+
+    var result = xhr.responseText;
+    console.log(result);
+    return result;
 }
