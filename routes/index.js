@@ -84,15 +84,18 @@ router.get('/sendHighlights', function(req, res) {
         console.log("Eliminating substrings")
         for(var i = 0; i < urlRecords.length; i++) {
             var record = urlRecords[i]
-            for (var j = i + 1; j < urlRecords.length; j++) {
+            if(record === undefined)
+                continue
+            for (var j = 0; j < urlRecords.length; j++) {
                 var otherRecord = urlRecords[j]
+                if(otherRecord === undefined)
+                    continue
                 console.log("Comparing " + record.selectedText  + " AND " + otherRecord.selectedText)
-                if(record.selectedText.indexOf(otherRecord.selectedText) !== -1) {
+                if(record.selectedText.indexOf(otherRecord.selectedText.trim()) !== -1 && i !== j) {
                     console.log("Matched!")
                     result[record.selectedText]++
                     result[otherRecord.selectedText] = undefined
-                    urlRecords.splice(j, 1)
-                    j--;
+                    urlRecords[j] = undefined
                 }
             }
         }
@@ -103,23 +106,25 @@ router.get('/sendHighlights', function(req, res) {
         for(var i = 0; i < urlRecords.length; i++) {
             var record = urlRecords[i]
             var breaker = false
+            if(record === undefined)
+                continue
             for (var j = i + 1; j < urlRecords.length; j++) {
                 var otherRecord = urlRecords[j]
+                if(otherRecord === undefined)
+                    continue
                 console.log("Comparing " + record.selectedText  + " AND " + otherRecord.selectedText)
-                if(fuzz.ratio(record.selectedText, otherRecord.selectedText) > 60) {
+                if(fuzz.ratio(record.selectedText.trim(), otherRecord.selectedText.trim()) > 60) {
                     console.log("Fuzzy selected")
                     if(result[record.selectedText] > result[otherRecord.selectedText]) {
                         console.log("Removing " + otherRecord.selectedText)
                         result[record.selectedText]++
                         result[otherRecord.selectedText] = undefined
-                        urlRecords.splice(j, 1)
-                        j--
+                        urlRecords[j] = undefined
                     } else {
                         console.log("Removing " + record.selectedText)
                         result[otherRecord.selectedText]++
                         result[record.selectedText] = undefined
-                        urlRecords.splice(i, 1)
-                        i--
+                        urlRecords[i] = undefined
                         breaker = true
                     }
                 }
