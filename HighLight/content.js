@@ -42,16 +42,15 @@ function highlightTexts(textObjects) {
  * API request to get the text to highlight on the current webpage
  */
 function getTextsToHighlight() {
-    var xhr = new XMLHttpRequest();
     var currUrl = window.location.href;
+    var xmlhttp = new XMLHttpRequest();
 
-    xhr.open("GET", "https://fbhackbackend.herokuapp.com/sendHighlights?url=" + currUrl, false);
-    xhr.send();
-
-    var result = xhr.responseText;
-    console.log(result);
-
-    // highlightTexts(textObjects);
+    xmlhttp.onreadystatechange = function() {
+      var textObjects = JSON.parse(this.responseText);
+      highlightTexts(textObjects);
+    }
+    xmlhttp.open("GET", "https://fbhackbackend.herokuapp.com/sendHighlights?url=" + currUrl, false);
+    xmlhttp.send();
 }
 
 /**
@@ -66,7 +65,5 @@ function sendSelectedText(username, selectedText) {
 
     var result = xhr.responseText;
     console.log(result);
-
-    // highlightTexts(textObjects);
 }
 
