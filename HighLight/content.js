@@ -12,7 +12,7 @@ const SELECTED_TEXT_PARAMETER = "&selectedText=";
 const URL_POST_PARAMETER = "&url=";
 
 // Highlight constants
-const NORMALISATION_VALUE = 20;
+const NORMALISATION_VALUE = 25;
 const HIGHLIGHT_COLOURS = ["#F7F7B9", "#FFFF3D", "#FCC691", "#FA8C1E", "#F76363"];
 
 var testUserName = "test";
@@ -96,14 +96,14 @@ function highlight(text, intensity) {
     console.log("===Text to highlight not found: " + text);
     return ;
   }
-  document.execCommand("HiliteColor", false, "yellow");
+  document.execCommand("HiliteColor", false, intensityColor);
   text = text.substr(1, text.length - 2)
   window.find(text, isCaseSensitive, isBackwards, isWrapAround);
   var selection = window.getSelection().getRangeAt(0).cloneContents();
   var span = document.createElement('span');
   span.appendChild(selection);
   var tooltip = '<span class="tooltiptext">  👍   👎   </span>'
-  var wrappedselection = '<span class="tooltip" style="background-color:yellow;">' + span.innerHTML + tooltip + '</span>';
+  var wrappedselection = '<span class="tooltip" style="background-color:' + intensityColor + ';">' + span.innerHTML + tooltip + '</span>';
   document.execCommand('insertHTML', false, wrappedselection);
   window.getSelection().removeAllRanges();
 }
@@ -131,8 +131,8 @@ function getTextsToHighlight() {
     var xhr = new XMLHttpRequest();
     var currUrl = window.location.href;
     var response = getFromServer(HEROKU_APP + URL_GET_PARAMETER + currUrl);
-
     var textObjects = JSON.parse(response);
+
   /*
     textObjects = [
       {"text": "Computer programming is the process of designing and building an executable computer program for accomplishing a specific computing task.", "intensity": 25},
