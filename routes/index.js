@@ -80,20 +80,29 @@ router.get('/sendHighlights', function(req, res) {
         urlRecords = JSON.parse(urlRecords);
         console.log(urlRecords)
 
-        //var friendList = getFriendList()
+        var friendList = getFriendList()
 
         var result = []
 
         console.log("Filtering");
         var denom = 0
         for(var i = 0; i < urlRecords.length; i++) {
+            if(urlRecords[i] == undefined)
+                continue
             result[urlRecords[i].selectedText] = 1
             for(var j = i + 1; j < urlRecords.length; j++) {
+                if(urlRecords[j] == undefined)
+                    continue
                 console.log("Comparing " + urlRecords[i].selectedText  + " AND " + urlRecords[j].selectedText)
                 if(urlRecords[i].selectedText === urlRecords[j].selectedText) {
                     console.log("Matched!")
-                    urlRecords[j] = undefined
-                    result[urlRecords[i].selectedText]++;
+                    // if(friendList.indexOf(urlRecords[j].username) !== -1) {
+                    //     urlRecords[i] = undefined
+                    //     result[urlRecords[j].selectedText]++;
+                    // } else {
+                        urlRecords[j] = undefined
+                        result[urlRecords[i].selectedText]++;
+                    // }
                 }
             }
             denom += result[urlRecords[i].selectedText]
