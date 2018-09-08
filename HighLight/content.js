@@ -62,8 +62,8 @@ function sendSelectionText() {
         selectedTextSet.add(selectedText);
 
         var currUrl = window.location.href;
-        var response = getFromServer(HEROKU_APP + USERNAME_PARAMETER + testUserName
-            + SELECTED_TEXT_PARAMETER + selectedText + URL_POST_PARAMETER + currUrl);
+        // var response = getFromServer(HEROKU_APP + USERNAME_PARAMETER + testUserName
+        //     + SELECTED_TEXT_PARAMETER + selectedText + URL_POST_PARAMETER + currUrl);
         // response == "200 OK"
     }
 }
@@ -85,6 +85,22 @@ function getIntensityColor(intensity) {
 }
 
 /**
+ * Adds a floating tooltip to the text that is highlighted.
+ *
+ * {@param String} intensityColor Colour to highlight selected text with
+ */
+function addTooltip(intensityColor) {
+  var selection = window.getSelection().getRangeAt(0).cloneContents();
+  var span = document.createElement('span');
+  span.appendChild(selection);
+
+  var tooltip = '<span class="tooltiptext">  👍   👎   </span>'
+  var wrappedselection = '<span class="tooltip" style="background-color:' + intensityColor + ';">' + span.innerHTML + tooltip + '</span>';
+
+  document.execCommand('insertHTML', false, wrappedselection);
+}
+
+/**
  * {@param String} text Text to be highlighted
  * {@param Integer} intensity Intensity of the highlight
  */
@@ -95,21 +111,20 @@ function highlight(text, intensity) {
   let intensityColor  = getIntensityColor(intensity);
 
   if (window.find(text, isCaseSensitive, isBackwards, isWrapAround)) {
-    console.log("Text highlighted");
-  }
-  else {
+    console.log("Text found");
+  } else {
     console.log("===Text to highlight not found: " + text);
     return ;
   }
+
   document.execCommand("HiliteColor", false, intensityColor);
-  text = text.substr(1, text.length - 2)
+
+  text = text.substr(1, text.length - 2);
   window.find(text, isCaseSensitive, isBackwards, isWrapAround);
-  var selection = window.getSelection().getRangeAt(0).cloneContents();
-  var span = document.createElement('span');
-  span.appendChild(selection);
-  var tooltip = '<span class="tooltiptext">  👍   👎   </span>'
-  var wrappedselection = '<span class="tooltip" style="background-color:' + intensityColor + ';">' + span.innerHTML + tooltip + '</span>';
-  document.execCommand('insertHTML', false, wrappedselection);
+
+  addTooltip(intensityColor);
+
+  // Clean up
   window.getSelection().removeAllRanges();
 }
 
@@ -138,13 +153,6 @@ function getTextsToHighlight() {
     var response = getFromServer(HEROKU_APP + URL_GET_PARAMETER + currUrl);
     var textObjects = JSON.parse(response);
 
-  /*
-    textObjects = [
-      {"text": "Computer programming is the process of designing and building an executable computer program for accomplishing a specific computing task.", "intensity": 25},
-      {"text": "the implementation of algorithms in a chosen programming language (commonly referred to as coding[1][2]).", "intensity": 30},
-      {"text": "Computer programming is the process of designing and building an executable computer program for accomplishing a specific computing task.", "intensity": 20},
-    ]
-    */
     highlightTexts(textObjects);
 }
 
