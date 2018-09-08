@@ -4,7 +4,7 @@
   ========================================
   */
 // Request constants
-const HEROKU_APP = "https://fbhackbackend.herokuapp.com";
+const HEROKU_APP = "https://highlight007.herokuapp.com";
 const URL_GET_PARAMETER = "/sendHighlights?url=";
 const USERNAME_PARAMETER = "/getText?username=";
 const SELECTED_TEXT_PARAMETER = "&selectedText=";
