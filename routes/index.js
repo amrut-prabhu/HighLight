@@ -39,7 +39,7 @@ router.get('/getText', function(req, res) {
       url:     'https://api.mlab.com/api/1/databases/textinfo/collections/local?apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV',
       body:    JSON.stringify({username: req.query.username || "LOL", selectedText: req.query.selectedText || "LOL LOL2 LOL", url: req.query.url || "LOL"})
     }, function(error, response, body){
-      console.log(body);
+      res.send(200)
     });
 });
 
