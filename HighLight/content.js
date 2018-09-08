@@ -3,11 +3,17 @@
   Constants
   ========================================
 */
+
+// Request constants
 const HEROKU_APP = "https://fbhackbackend.herokuapp.com";
 const URL_GET_PARAMETER = "/sendHighlights?url=";
 const USERNAME_PARAMETER = "/getText?username=";
 const SELECTED_TEXT_PARAMETER = "&selectedText=";
 const URL_POST_PARAMETER = "&url=";
+
+// Highlight constants
+const NORMALISATION_VALUE = 20;
+const HIGHLIGHT_COLOURS = ["#F7F7B9", "#FFFF3D", "#FCC691", "#FA8C1E", "#F76363"];
 
 var testUserName = "test";
 
@@ -69,7 +75,8 @@ function sendSelectionText() {
  * {@return String} String representing a Hexadecimal colour value
  */
 function getIntensityColour(intensity) {
-    return "yellow";
+    var intensityLevel = intensity / NORMALISATION_VALUE;
+    return HIGHLIGHT_COLOURS[intensityLevel];
 }
 
 /**
