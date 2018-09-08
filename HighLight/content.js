@@ -2,7 +2,7 @@
   ========================================
   Constants
   ========================================
-*/
+  */
 
 // Request constants
 const HEROKU_APP = "https://fbhackbackend.herokuapp.com";
@@ -26,7 +26,7 @@ var testUserName = "test";
   ========================================
   Function Calls
   ========================================
-*/
+  */
 
 // Adds highlights to important text when the webpage is loaded
 highlightTexts();
@@ -34,41 +34,44 @@ highlightTexts();
 // EVent handler
 document.onmouseup = sendSelectionText;
 
-
 /*
   ========================================
   Sending Selected Text functions
   ========================================
-*/
+  */
 
 /**
  * Returns the text that is currently selected on the webpage.
  */
 function getSelectedText() {
-    var text = "";
-    if (typeof window.getSelection != "undefined") {
-        text = window.getSelection().toString();
-    } else if (typeof document.selection != "undefined" && document.selection.type == "Text") {
-        text = document.selection.createRange().text;
-    }
-    return text;
+  var text = "";
+  if (typeof window.getSelection != "undefined") {
+    text = window.getSelection().toString();
+  } else if (typeof document.selection != "undefined" && document.selection.type == "Text") {
+    text = document.selection.createRange().text;
+  }
+  return text;
+}
+
+function sendTextURL(selectedText) {
+  var currUrl = window.location.href;
+  var response = getFromServer(HEROKU_APP + USERNAME_PARAMETER + testUserName
+    + SELECTED_TEXT_PARAMETER + selectedText + URL_POST_PARAMETER + currUrl);
 }
 
 /**
  * Sends the selected text to the server .
  */
 function sendSelectionText() {
-    var selectedText = getSelectedText();
+  var selectedText = getSelectedText();
 
-    if (selectedText && !selectedTextSet.has(selectedText) && window.find(selectedText, isCaseSensitive, isBackwards, isWrapAround)) {
-        console.log("Selected: " + selectedText);
-        selectedTextSet.add(selectedText);
+  if (selectedText && !selectedTextSet.has(selectedText) && window.find(selectedText, isCaseSensitive, isBackwards, isWrapAround)) {
+    console.log("Selected: " + selectedText);
+    selectedTextSet.add(selectedText);
 
-        var currUrl = window.location.href;
-        // var response = getFromServer(HEROKU_APP + USERNAME_PARAMETER + testUserName
-        //     + SELECTED_TEXT_PARAMETER + selectedText + URL_POST_PARAMETER + currUrl);
-        // response == "200 OK"
-    }
+    sendTextURL(selectedText)
+    // response == "200 OK"
+  }
 }
 
 
@@ -76,15 +79,19 @@ function sendSelectionText() {
   ========================================
   Highlighting Text functions
   ========================================
-*/
+  */
 
 /**
  * {@param Integer} intensity Intensity of the highlight
  * {@return String} String representing a Hexadecimal colour value
  */
 function getIntensityColor(intensity) {
-    var intensityLevel = Math.floor(intensity / NORMALISATION_VALUE);
-    return HIGHLIGHT_COLORS[intensityLevel];
+  var intensityLevel = Math.floor(intensity / NORMALISATION_VALUE);
+  return HIGHLIGHT_COLORS[intensityLevel];
+}
+
+function alert_box() {
+  alert("DEBUG")
 }
 
 /**
@@ -97,7 +104,9 @@ function addTooltip(intensityColor, matches) {
   var span = document.createElement('span');
   span.appendChild(selection);
 
-  var tooltip = '<span class="tooltiptext">  👍   👎  &nbsp; &nbsp; &nbsp; &nbsp; ' +   matches + '  👦 </span>'
+  var upvote = '<button class="upvote" onclick="function() { alert("debug")}"> 👍  </button>'
+
+  var tooltip = '<span class="tooltiptext"> ' + upvote +  '   👎  &nbsp; &nbsp; &nbsp; &nbsp; ' +   matches + '  👦 </span>'
   var wrappedselection = '<span class="tooltip" style="background-color:' + intensityColor + ';">' + span.innerHTML + tooltip + '</span>';
 
   document.execCommand('insertHTML', false, wrappedselection);
@@ -150,31 +159,31 @@ function highlightTexts() {
  * {@return} Texts to highlight on the current webpage.
  */
 function getTextsToHighlight() {
-    var xhr = new XMLHttpRequest();
-    var currUrl = window.location.href;
-    var response = getFromServer(HEROKU_APP + URL_GET_PARAMETER + currUrl);
-    var textObjects = JSON.parse(response);
+  var xhr = new XMLHttpRequest();
+  var currUrl = window.location.href;
+  var response = getFromServer(HEROKU_APP + URL_GET_PARAMETER + currUrl);
+  var textObjects = JSON.parse(response);
 
-    return textObjects;
+  return textObjects;
 }
 
 /*
   ========================================
   API calls to Heroku server
   ========================================
-*/
+  */
 
 /**
  * {@param String} url URL to which the request is to be sent.
  * {@return String} Returns response from server
  */
 function getFromServer(url) {
-    var xhr = new XMLHttpRequest();
+  var xhr = new XMLHttpRequest();
 
-    xhr.open("GET", url, false);
-    xhr.send();
+  xhr.open("GET", url, false);
+  xhr.send();
 
-    var result = xhr.responseText;
-    console.log(result);
-    return result;
+  var result = xhr.responseText;
+  console.log(result);
+  return result;
 }

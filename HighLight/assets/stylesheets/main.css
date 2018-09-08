@@ -32,3 +32,13 @@
       visibility: visible;
       transition: .25s ease-in-out 0s;
 }
+
+.upvote {
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+  font-size: 20px;
+}
+
+.upvote:hover {
+  font-size: 30px;
+}
