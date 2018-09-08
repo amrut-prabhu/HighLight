@@ -1,0 +1,35 @@
+{
+    "name": "HighLight",
+    "description": "Fb-hack project",
+    "version": "0.1",
+    "manifest_version":2,
+    "permissions": [
+    "tabs","<all_urls>"
+    ],
+    "browser_action": {
+        "default_icon": "assets/images/icon.png",
+        "default_popup": "about_us.html"
+    },
+    "content_scripts": [
+        {
+        "matches": [
+            "http://*/*",
+            "https://*/*"
+            ],
+        "exclude_matches": [
+            "*://*.facebook.com/*",
+            "*://*.twitter.com/*",
+            "*://*.youtube.com/*",
+            "*://*.whatsapp.com/*",
+            "*://*.mail.google.com/*"
+        ],
+        "js": ["content.js"],
+        "css": ["assets/stylesheets/main.css"],
+        "run_at": "document_end"
+        }
+    ],
+    "permissions": [
+        "https://fbhackbackend.herokuapp.com/*"
+    ]
+}
+
