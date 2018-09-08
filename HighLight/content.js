@@ -1,24 +1,36 @@
-document.designMode = "on";
+// Test URL:
+// https://www.google.com.sg/search?rlz=1C1CHWA_enAE610AE610&ei=JJ6TW5XMLcr6vASbwo2gDg&q=chrome+extension+development&oq=ch&gs_l=psy-ab.3.0.35i39k1l2j0i67k1j0i20i263k1j0i131k1l2j0i20i263k1j0i131k1l2j0.102472.102632.0.103697.2.2.0.0.0.0.57.108.2.2.0....0...1c.1.64.psy-ab..0.2.107....0.EalnqmHrA8w
 
-window.find(" with - HTML, CSS, and ", true, false, true);
-document.execCommand("HiliteColor", false, "yellow");
+var textObjects = [];
 
-window.find("chrome://extensio", true, false, true);
-document.execCommand("HiliteColor", false, "yellow");
+var textObj1 = {
+    text: " with - HTML, CSS, and ",
+    intensity: 1
+}
+var textObj2 = {
+    text: "chrome://extensio",
+    intensity: 2
+}
+var textObj3 = {
+    text: "ery Chrome API but canno",
+    intensity: 3
+}
+var textObj4 = {
+    text: "create a Chrome extension",
+    intensity: 4
+}
+var textObj5 = {
+    text: "customize an extension.",
+    intensity: 5
+}
 
-window.find("ery Chrome API but canno", true, false, true);
-document.execCommand("HiliteColor", false, "yellow");
+textObjects.push(textObj1);
+textObjects.push(textObj2);
+textObjects.push(textObj3);
+textObjects.push(textObj4);
+textObjects.push(textObj5);
 
-// scroll(0,0);
-// window.scrollTo(0,0);
-//$('html,body').scrollTop(0);
-console.log(window.find("customize an extension.", true, false, true));
-document.execCommand("HiliteColor", false, "#ed1b04");
-window.getSelection().removeAllRanges();
-
-document.designMode = "off";
-
-// https://www.google.com.sg/search?q=chrome+extension+development&rlz=1C1CHWA_enAE610AE610&oq=chro&aqs=chrome.0.69i59j69i60j0j69i60j69i59j69i65.1195j0j7&sourceid=chrome&ie=UTF-8
+highlightTexts(textObjects);
 
 /**
  * {@param String} text Text to be highlighted
@@ -29,7 +41,7 @@ function highlight(text, intensity) {
     let isBackwards = false;
     let isWrapAround = true;
 
-    console.log("Found = " + window.find("customize an extension.", isCaseSensitive, isBackwards, isWrapAround));
+    console.log("Found = " + window.find(text, isCaseSensitive, isBackwards, isWrapAround));
     document.execCommand("HiliteColor", false, getIntensityColour(intensity));
     window.getSelection().removeAllRanges();
 }
@@ -39,7 +51,7 @@ function highlight(text, intensity) {
  * {@return String} String representing a Hexadecimal colour value
  */
 function getIntensityColour(intensity) {
-    return "#ed1b04";
+    return "yellow";
 }
 
 /**
@@ -49,8 +61,8 @@ function highlightTexts(textObjects) {
     // Allow modifications to webpage
     document.designMode = "on";
 
-    for (var i = 0; i < textObjects.length(); i++) {
-        highlight(textObject[i].text, textObject[i].intensity);
+    for (var i = 0; i < textObjects.length; i++) {
+        highlight(textObjects[i].text, textObjects[i].intensity);
     }
 
     // Clean up
