@@ -100,15 +100,18 @@ function getIntensityColor(intensity) {
  * {@param String} intensityColor Colour to highlight selected text with
  * {@param Integer} matches
  */
-function addTooltip(text, intensityColor, matches) {
+function addTooltip(text, intensityColor, matches, friends) {
   var selection = window.getSelection().getRangeAt(0).cloneContents();
   var span = document.createElement('span');
   span.appendChild(selection);
 
-  var upvoteBtn = ' <button class="upvote" text="' + text + '"> 👍</button> '
-  var downvoteBtn = ' <button class="downvote" text="' + text + '">👎 &nbsp; &nbsp; </button> '
+  var upvoteBtn = ' <button class="upvote" text="' + text + '">👍</button> '
+  var downvoteBtn = ' <button class="downvote" text="' + text + '">👎</button> '
 
-  var tooltip = '<span class="tooltiptext"> ' + upvoteBtn +  downvoteBtn + matches + '  😃 </span>'
+  var tooltip = '<span class="tooltiptext"> ' + upvoteBtn +  downvoteBtn + matches + '😃';
+  if (friends > 0)
+    tooltip = tooltip + ' &nbsp; ' + friends + '👫';
+  tooltip = tooltip + '</span>';
   var wrappedselection = '<span class="tooltip" style="background-color:' + intensityColor + ';">' + span.innerHTML + tooltip + '</span>';
 
   document.execCommand('insertHTML', false, wrappedselection);
@@ -119,8 +122,8 @@ function addTooltip(text, intensityColor, matches) {
  * {@param Integer} intensity Intensity of the highlight
  * {@param Integer} matches Number of times the text has been selected
  */
-function highlight(text, intensity, matches) {
-  let intensityColor  = getIntensityColor(intensity);
+function highlight(text, intensity, matches, friends) {
+  let intensityColor  = (friends > 0 ? "#a5c6ff" : getIntensityColor(intensity));
 
   if (window.find(text, isCaseSensitive, isBackwards, isWrapAround)) {
     console.log("Text found");
@@ -134,7 +137,7 @@ function highlight(text, intensity, matches) {
   let trimmedText = text.substr(1, text.length - 2);
   window.find(trimmedText, isCaseSensitive, isBackwards, isWrapAround);
 
-  addTooltip(text, intensityColor, matches);
+  addTooltip(text, intensityColor, matches, friends);
 
   // Clean up
   window.getSelection().removeAllRanges();
@@ -162,7 +165,7 @@ function highlightTexts() {
     // Allow modifications to webpage
     document.designMode = "on";
     for (var i = 0; i < textObjects.length; i++) {
-      highlight(textObjects[i].text, textObjects[i].intensity, textObjects[i].matches);
+      highlight(textObjects[i].text, textObjects[i].intensity, textObjects[i].matches, textObjects[i].friendMatches);
     }
   } catch (err) {
     console.log("===" + err.message);
