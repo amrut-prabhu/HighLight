@@ -97,14 +97,16 @@ function alert_box() {
 /**
  * Adds a floating tooltip to the text that is highlighted.
  *
+ * {@param String} text
  * {@param String} intensityColor Colour to highlight selected text with
+ * {@param Integer} matches
  */
-function addTooltip(intensityColor, matches) {
+function addTooltip(text, intensityColor, matches) {
   var selection = window.getSelection().getRangeAt(0).cloneContents();
   var span = document.createElement('span');
   span.appendChild(selection);
 
-  var upvote = '<button class="upvote" onclick="function() { alert("debug")}"> 👍  </button>'
+  var upvote = '<button id="upvoteBtn1" class="upvote" onclick="alert_box" text="' + text + '"> 👍  </button>'
 
   var tooltip = '<span class="tooltiptext"> ' + upvote +  '   👎  &nbsp; &nbsp; &nbsp; &nbsp; ' +   matches + '  👦 </span>'
   var wrappedselection = '<span class="tooltip" style="background-color:' + intensityColor + ';">' + span.innerHTML + tooltip + '</span>';
@@ -115,6 +117,7 @@ function addTooltip(intensityColor, matches) {
 /**
  * {@param String} text Text to be highlighted
  * {@param Integer} intensity Intensity of the highlight
+ * {@param Integer} matches Number of times the text has been selected
  */
 function highlight(text, intensity, matches) {
   let intensityColor  = getIntensityColor(intensity);
@@ -128,10 +131,10 @@ function highlight(text, intensity, matches) {
 
   document.execCommand("HiliteColor", false, intensityColor);
 
-  text = text.substr(1, text.length - 2);
-  window.find(text, isCaseSensitive, isBackwards, isWrapAround);
+  let trimmedText = text.substr(1, text.length - 2);
+  window.find(trimmedText, isCaseSensitive, isBackwards, isWrapAround);
 
-  addTooltip(intensityColor, matches);
+  addTooltip(text, intensityColor, matches);
 
   // Clean up
   window.getSelection().removeAllRanges();
@@ -186,4 +189,37 @@ function getFromServer(url) {
   var result = xhr.responseText;
   console.log(result);
   return result;
+}
+
+/*
+  ========================================
+  Tooltip button listeners
+  ========================================
+  */
+
+/*var upvoteBtn1 = document.getElementById('upvoteBtn1');
+upvoteBtn1.addEventListener('click', function(){
+  alert("Button clicked!");
+});
+
+
+
+if (document.body.addEventListener){
+    document.body.addEventListener('click', upvoteHandler,false);
+}
+else{
+    document.body.attachEvent('onclick', upvoteHandler); //for IE
+}
+*/
+
+document.body.addEventListener('click', upvoteHandler,false);
+
+function upvoteHandler(event){
+    event = event || window.event;
+    var targetElement = event.target || event.srcElement;
+    if (targetElement.className.match(/upvote/)) {
+        //an element with the "upvote" class was clicked
+        var highlightedText = targetElement.getAttribute("text");
+        sendTextURL(highlightedText);
+    }
 }
