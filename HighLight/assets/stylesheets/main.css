@@ -24,14 +24,13 @@
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 180px;
-    /*background-color: rgba(211, 211, 211, 0.9);*/
     background-color: rgba(0,0,0, 0.9);
     color: #fff;
     text-align: center;
     border-radius: 6px;
     padding: 2px 0;
     font-size: 20px;
-    transition: .75s ease-in-out 1s;
+    transition: 0.5s ease-in-out 0.7s;
 
     /* Position the tooltip */
     position: absolute;
@@ -50,5 +49,15 @@
 }
 
 .upvote:hover {
+  font-size: 30px;
+}
+
+.downvote {
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+  font-size: 20px;
+}
+
+.downvote:hover {
   font-size: 30px;
 }

@@ -90,10 +90,6 @@ function getIntensityColor(intensity) {
   return HIGHLIGHT_COLORS[intensityLevel];
 }
 
-function alert_box() {
-  alert("DEBUG")
-}
-
 /**
  * Adds a floating tooltip to the text that is highlighted.
  *
@@ -106,9 +102,10 @@ function addTooltip(text, intensityColor, matches) {
   var span = document.createElement('span');
   span.appendChild(selection);
 
-  var upvote = '<button id="upvoteBtn1" class="upvote" onclick="alert_box" text="' + text + '"> 👍  </button>'
+  var upvoteBtn = ' <button class="upvote" text="' + text + '"> 👍</button> '
+  var downvoteBtn = ' <button class="downvote" text="' + text + '">👎 &nbsp; &nbsp; </button> '
 
-  var tooltip = '<span class="tooltiptext"> ' + upvote +  '   👎  &nbsp; &nbsp; &nbsp; &nbsp; ' +   matches + '  👦 </span>'
+  var tooltip = '<span class="tooltiptext"> ' + upvoteBtn +  downvoteBtn + matches + '  😃 </span>'
   var wrappedselection = '<span class="tooltip" style="background-color:' + intensityColor + ';">' + span.innerHTML + tooltip + '</span>';
 
   document.execCommand('insertHTML', false, wrappedselection);
@@ -141,24 +138,6 @@ function highlight(text, intensity, matches) {
 }
 
 /**
- * {@param Array} textObjects Array of objects. Each object is {text: ... , intensity: ...}. Intensity should be [1,5].
- */
-function highlightTexts() {
-  var textObjects = getTextsToHighlight();
-
-  // Allow modifications to webpage
-  document.designMode = "on";
-
-  for (var i = 0; i < textObjects.length; i++) {
-    highlight(textObjects[i].text, textObjects[i].intensity, textObjects[i].matches);
-  }
-
-  // Clean up
-  document.designMode = "off";
-  scroll(0,0);
-}
-
-/**
  * {@return} Texts to highlight on the current webpage.
  */
 function getTextsToHighlight() {
@@ -168,6 +147,28 @@ function getTextsToHighlight() {
   var textObjects = JSON.parse(response);
 
   return textObjects;
+}
+
+/**
+ * {@param Array} textObjects Array of objects. Each object is {text: ... , intensity: ...}. Intensity should be [1,5].
+ */
+function highlightTexts() {
+  try {
+    var textObjects = getTextsToHighlight();
+
+    // Allow modifications to webpage
+    document.designMode = "on";
+    for (var i = 0; i < textObjects.length; i++) {
+      highlight(textObjects[i].text, textObjects[i].intensity, textObjects[i].matches);
+    }
+  } catch (err) {
+    console.log("===" + err.message);
+    document.designMode = "off";
+  }
+
+  // Clean up
+  document.designMode = "off";
+  scroll(0,0);
 }
 
 /*
@@ -196,21 +197,6 @@ function getFromServer(url) {
   Tooltip button listeners
   ========================================
   */
-
-/*var upvoteBtn1 = document.getElementById('upvoteBtn1');
-upvoteBtn1.addEventListener('click', function(){
-  alert("Button clicked!");
-});
-
-
-
-if (document.body.addEventListener){
-    document.body.addEventListener('click', upvoteHandler,false);
-}
-else{
-    document.body.attachEvent('onclick', upvoteHandler); //for IE
-}
-*/
 
 document.body.addEventListener('click', upvoteHandler,false);
 
