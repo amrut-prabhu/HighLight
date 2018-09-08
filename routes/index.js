@@ -194,6 +194,7 @@ router.get('/sendHighlights', function(req, res) {
     //     console.log(final_result)
     //     res.send(final_result)
     // })
+    res.send(200)
 }) 
 
 
