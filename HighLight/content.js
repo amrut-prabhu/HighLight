@@ -19,10 +19,10 @@ const HIGHLIGHT_COLORS = ["#fffdc6", "#fffa79", "#f7ff21"];
 
 const selectedTextSet = new Set();
 
-var testUserName = "test";
+var user_id = 1;
 
 chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-  console.log(response.user_id);
+  user_id = response.user_id;
 });
 
 /*
@@ -58,7 +58,7 @@ function getSelectedText() {
 
 function sendTextURL(selectedText) {
   var currUrl = window.location.href;
-  var response = getFromServer(HEROKU_APP + USERNAME_PARAMETER + testUserName
+  var response = getFromServer(HEROKU_APP + USERNAME_PARAMETER + user_id
     + SELECTED_TEXT_PARAMETER + selectedText + URL_POST_PARAMETER + currUrl);
 }
 
@@ -68,7 +68,7 @@ function sendTextURL(selectedText) {
 function sendSelectionText() {
   var selectedText = getSelectedText();
 
-  if (selectedText && !selectedTextSet.has(selectedText) && window.find(selectedText, isCaseSensitive, isBackwards, isWrapAround)) {
+  if (selectedText && !selectedTextSet.has(selectedText) && window.find(selectedText, isCaseSensitive, isBackwards, isWrapAround) && selectedText.length > 2) {
     console.log("Selected: " + selectedText);
     selectedTextSet.add(selectedText);
 
@@ -146,7 +146,7 @@ function highlight(text, intensity, matches) {
 function getTextsToHighlight() {
   var xhr = new XMLHttpRequest();
   var currUrl = window.location.href;
-  var response = getFromServer(HEROKU_APP + URL_GET_PARAMETER + currUrl);
+  var response = getFromServer(HEROKU_APP + URL_GET_PARAMETER + currUrl + "&username=" + user_id);
   var textObjects = JSON.parse(response);
 
   return textObjects;
@@ -189,6 +189,8 @@ function getFromServer(url) {
 
   xhr.open("GET", url, false);
   xhr.send();
+
+  console.log(url);
 
   var result = xhr.responseText;
   console.log(result);
