@@ -4,6 +4,10 @@
     <meta charset="utf-8">
     <title>Highlight Extension</title>
     <link rel="stylesheet" href="assets/stylesheets/main.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="make_groups.js"></script>
   </head>
 
   <body id="about-us">
@@ -12,5 +16,16 @@
     <p>
       Created at #FBSGHACK18!!
     </p>
+    <form onsubmit="join_group(); return false;">
+      <label for="Join Group"> Join group: </label>
+      <input id="join_group" type="text" required="true" placeholder="Name of the group">
+      <input id="submit_btn" type="submit" value="Join" class="btn btn-success">
+    </form>
+    <br>
+    <form onsubmit="create_group(); return false;">
+      <label for="Create Group"> Create group: </label>
+      <input id="create_group" type="text" required="true" placeholder="Name of the group">
+      <input id="submit_btn" type="submit" value="Create" class="btn btn-success">
+    </form>
   </body>
 </html>

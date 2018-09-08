@@ -21,6 +21,10 @@ const selectedTextSet = new Set();
 
 var testUserName = "test";
 
+chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
+  console.log(response.user_id);
+});
+
 /*
   ========================================
   Function Calls
