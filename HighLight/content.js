@@ -79,7 +79,12 @@ function highlight(text, intensity) {
     let isBackwards = false;
     let isWrapAround = true;
 
-    console.log("Found = " + window.find(text, isCaseSensitive, isBackwards, isWrapAround));
+    if (window.find(text, isCaseSensitive, isBackwards, isWrapAround)) {
+        console.log("Text highlighted");
+    }
+    else {
+        console.log("===Text to highlight not found: " + text);
+    }
     document.execCommand("HiliteColor", false, getIntensityColour(intensity));
     window.getSelection().removeAllRanges();
 }
@@ -107,8 +112,8 @@ function getTextsToHighlight() {
     var currUrl = window.location.href;
     var response = getFromServer(HEROKU_APP + URL_GET_PARAMETER + currUrl);
 
-    var textObjects;
-    // highlightTexts(textObjects);
+    var textObjects = JSON.parse(response);
+    highlightTexts(textObjects);
 }
 
 /*
