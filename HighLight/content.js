@@ -26,7 +26,7 @@ var testUserName = "test";
 */
 
 // Adds highlights to important text when the webpage is loaded
-getTextsToHighlight();
+highlightTexts();
 
 // EVent handler
 document.onmouseup = sendSelectionText;
@@ -131,7 +131,9 @@ function highlight(text, intensity) {
 /**
  * {@param Array} textObjects Array of objects. Each object is {text: ... , intensity: ...}. Intensity should be [1,5].
  */
-function highlightTexts(textObjects) {
+function highlightTexts() {
+  var textObjects = getTextsToHighlight();
+
   // Allow modifications to webpage
   document.designMode = "on";
 
@@ -145,7 +147,7 @@ function highlightTexts(textObjects) {
 }
 
 /**
- * API request to get the text to highlight on the current webpage
+ * {@return} Texts to highlight on the current webpage.
  */
 function getTextsToHighlight() {
     var xhr = new XMLHttpRequest();
@@ -153,7 +155,7 @@ function getTextsToHighlight() {
     var response = getFromServer(HEROKU_APP + URL_GET_PARAMETER + currUrl);
     var textObjects = JSON.parse(response);
 
-    highlightTexts(textObjects);
+    return textObjects;
 }
 
 /*
