@@ -46,7 +46,7 @@ router.get('/getText', function(req, res) {
 router.get('/sendHighlights', function(req, res) {
     console.log("Route reached")
     var url = req.query.url || "https://en.wikipedia.org/wiki/Computer_programming"
-    request("https://api.mlab.com/api/1/databases/textinfo/collections/local?q={\"url\":\"" + encodeURIComponent(url) + "\"}&apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV", function (error, res, urlRecords) {
+    request("https://api.mlab.com/api/1/databases/textinfo/collections/local?q={\"url\":\"" + encodeURIComponent(url) + "\"}&apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV", function (error, response, urlRecords) {
         // console.log(response)
         // console.log(body)
         urlRecords = JSON.parse(urlRecords);
@@ -54,7 +54,7 @@ router.get('/sendHighlights', function(req, res) {
         var result = []
         for(var i = 0; i < urlRecords.length; i++) {
             var record = urlRecords[i]
-            var matches = 0;
+            var matches = 1;
             for (var j = 0; j < urlRecords.length; j++) {
                 var otherRecord = urlRecords[j]
                 console.log("Comparing " + record.selectedText  + " and " + otherRecord.selectedText)
@@ -68,7 +68,11 @@ router.get('/sendHighlights', function(req, res) {
         result = result.filter(function(elem, pos) {
             return result.indexOf(elem) == pos;
         })
-
+        var ratio = Math.max(...result.map((r) => r.matches)) / 100
+        for (var i = 0; i < result.length; i++) {
+            result[i].intensity = Math.round(result[i].matches / ratio);
+        }
+        res.send(result)
     })
 })  
 
