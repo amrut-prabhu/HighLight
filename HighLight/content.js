@@ -10,6 +10,9 @@ const URL_GET_PARAMETER = "/sendHighlights?url=";
 const USERNAME_PARAMETER = "/getText?username=";
 const SELECTED_TEXT_PARAMETER = "&selectedText=";
 const URL_POST_PARAMETER = "&url=";
+const isCaseSensitive = true;
+const isBackwards = false;
+const isWrapAround = true;
 
 // Highlight constants
 const NORMALISATION_VALUE = 25;
@@ -57,7 +60,7 @@ function getSelectedText() {
 function sendSelectionText() {
     var selectedText = getSelectedText();
 
-    if (selectedText && !selectedTextSet.has(selectedText)) {
+    if (selectedText && !selectedTextSet.has(selectedText) && window.find(selectedText, isCaseSensitive, isBackwards, isWrapAround)) {
         console.log("Selected: " + selectedText);
         selectedTextSet.add(selectedText);
 
@@ -89,12 +92,12 @@ function getIntensityColor(intensity) {
  *
  * {@param String} intensityColor Colour to highlight selected text with
  */
-function addTooltip(intensityColor) {
+function addTooltip(intensityColor, matches) {
   var selection = window.getSelection().getRangeAt(0).cloneContents();
   var span = document.createElement('span');
   span.appendChild(selection);
 
-  var tooltip = '<span class="tooltiptext">  👍   👎   </span>'
+  var tooltip = '<span class="tooltiptext">  👍   👎  &nbsp; &nbsp; &nbsp; &nbsp; ' +   matches + '  👦 </span>'
   var wrappedselection = '<span class="tooltip" style="background-color:' + intensityColor + ';">' + span.innerHTML + tooltip + '</span>';
 
   document.execCommand('insertHTML', false, wrappedselection);
@@ -104,10 +107,7 @@ function addTooltip(intensityColor) {
  * {@param String} text Text to be highlighted
  * {@param Integer} intensity Intensity of the highlight
  */
-function highlight(text, intensity) {
-  let isCaseSensitive = true;
-  let isBackwards = false;
-  let isWrapAround = true;
+function highlight(text, intensity, matches) {
   let intensityColor  = getIntensityColor(intensity);
 
   if (window.find(text, isCaseSensitive, isBackwards, isWrapAround)) {
@@ -122,7 +122,7 @@ function highlight(text, intensity) {
   text = text.substr(1, text.length - 2);
   window.find(text, isCaseSensitive, isBackwards, isWrapAround);
 
-  addTooltip(intensityColor);
+  addTooltip(intensityColor, matches);
 
   // Clean up
   window.getSelection().removeAllRanges();
@@ -138,7 +138,7 @@ function highlightTexts() {
   document.designMode = "on";
 
   for (var i = 0; i < textObjects.length; i++) {
-    highlight(textObjects[i].text, textObjects[i].intensity);
+    highlight(textObjects[i].text, textObjects[i].intensity, textObjects[i].matches);
   }
 
   // Clean up

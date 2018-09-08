@@ -13,13 +13,15 @@
 
 .tooltip .tooltiptext {
     visibility: hidden;
-    width: 120px;
-    background-color: rgba(211, 211, 211, 0.9);
+    width: 180px;
+    /*background-color: rgba(211, 211, 211, 0.9);*/
+    background-color: rgba(0,0,0, 0.9);
     color: #fff;
     text-align: center;
     border-radius: 6px;
     padding: 2px 0;
     font-size: 20px;
+    transition: .75s ease-in-out 1s;
 
     /* Position the tooltip */
     position: absolute;
@@ -28,34 +30,5 @@
 
 .tooltip:hover .tooltiptext {
       visibility: visible;
+      transition: .25s ease-in-out 0s;
 }
-<<<<<<< Updated upstream
-=======
-
-/*
-.tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black;
-}
-*/
-
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: rgba(211, 211, 211, 0.9);
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 2px 0;
-    font-size: 20px;
-
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
-}
-
-.tooltip:hover .tooltiptext {
-      visibility: visible;
-}
->>>>>>> Stashed changes
