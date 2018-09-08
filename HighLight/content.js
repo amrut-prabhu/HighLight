@@ -17,8 +17,10 @@ var testUserName = "test";
   ========================================
 */
 
+// Adds highlights to important text when the webpage is loaded
 getTextsToHighlight();
 
+// EVent handler
 document.onmouseup = sendSelectionText;
 
 
