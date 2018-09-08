@@ -63,6 +63,17 @@ router.get('/logout', function(req, res) {
         });
     });
 
+router.get('/createUser', function(req, res) {
+    request.post({
+      headers: {'content-type' : 'application/json'},
+      url:     'https://api.mlab.com/api/1/databases/textinfo/collections/users?apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV',
+      body:    JSON.stringify({username: req.query.username, groups: [], friends: []})
+    }, function(error, response, body){
+        if(error) res.send(error)
+        res.send(200)
+    });
+})
+
 router.get('/getText', function(req, res) {
     request.post({
       headers: {'content-type' : 'application/json'},

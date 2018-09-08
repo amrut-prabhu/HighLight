@@ -8,8 +8,6 @@ var userSchema = mongoose.Schema({
 
     local            : {
         username     : String,
-        password     : String,
-        loggedIn     : Boolean,
         groups		 : Array,
         friends		 : Array
         
@@ -27,6 +25,17 @@ userSchema.methods.generateHash = function(password) {
 userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.local.password);
 };
+
+userSchema.path('username').validate(function(value, done) {
+    this.model('User').count({ username: value }, function(err, count) {
+        if (err) {
+            return done(err);
+        } 
+        // If `count` is greater than zero, "invalidate"
+        done(!count);
+    });
+}, 'username already exists');
+
 
 // create the model for users and expose it to our app
 module.exports = mongoose.model('User', userSchema);
