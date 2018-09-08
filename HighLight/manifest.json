@@ -5,13 +5,21 @@
   "manifest_version": 2,
   "browser_action" : {
     "default_popup": "about_us.html",
-    "default_icon": "icon.png"
+    "default_icon": "assets/images/icon.png"
   },
   "content_scripts": [
     {
       "matches": ["http://*.wikipedia.com/*"],
-      "exclude_matches": ["*://*.facebook.com/*", "*://*.twitter.com/*", "*://*.youtube.com/*", "*://*.whatsapp.com/*", "*://*mail.google.com/*"],
-      "js": ["script.js"]
+
+      "exclude_matches": ["*://*.facebook.com/*",
+        "*://*.twitter.com/*",
+        "*://*.youtube.com/*",
+        "*://*.whatsapp.com/*",
+        "*://*mail.google.com/*"],
+
+      "js": ["script.js"],
+
+      "css": ["assets/stylesheets/main.css"]
     }
   ],
   "commands": {
@@ -24,3 +32,4 @@
     }
   }
 }
+
