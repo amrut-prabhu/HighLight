@@ -3,7 +3,6 @@
   Constants
   ========================================
   */
-
 // Request constants
 const HEROKU_APP = "https://fbhackbackend.herokuapp.com";
 const URL_GET_PARAMETER = "/sendHighlights?url=";
@@ -15,8 +14,8 @@ const isBackwards = false;
 const isWrapAround = true;
 
 // Highlight constants
-const NORMALISATION_VALUE = 25;
-const HIGHLIGHT_COLORS = ["#F7F7B9", "#FFFF3D", "#FCC691", "#FA8C1E", "#F76363"];
+const NORMALISATION_VALUE = 0.34;
+const HIGHLIGHT_COLORS = ["#fffdc6", "#fffa79", "#f7ff21"];
 
 const selectedTextSet = new Set();
 
