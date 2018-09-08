@@ -45,7 +45,23 @@ function getTextsToHighlight() {
     var xhr = new XMLHttpRequest();
     var currUrl = window.location.href;
 
-    xhr.open("GET", "https://fbhackbackend.herokuapp.com?par=" + currUrl, false);
+    xhr.open("GET", "https://fbhackbackend.herokuapp.com/sendHighlights?url=" + currUrl, false);
+    xhr.send();
+
+    var result = xhr.responseText;
+    console.log(result);
+
+    // highlightTexts(textObjects);
+}
+
+/**
+ * API request to get the text to highlight on the current webpage
+ */
+function sendSelectedText(username, selectedText) {
+    var xhr = new XMLHttpRequest();
+    var currUrl = window.location.href;
+
+    xhr.open("GET", "https://fbhackbackend.herokuapp.com/getText?username=" + username + "&selectedText=" + selectedText + "&url=" + currUrl, false);
     xhr.send();
 
     var result = xhr.responseText;
