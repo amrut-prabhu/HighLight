@@ -72,6 +72,7 @@ router.get('/sendHighlights', function(req, res) {
         for (var i = 0; i < result.length; i++) {
             result[i].intensity = Math.round(result[i].matches / ratio);
         }
+        result.sort((r1, r2) => r1.intensity - r2.intensity)
         res.send(result)
     })
 })  
