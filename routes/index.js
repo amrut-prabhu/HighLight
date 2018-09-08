@@ -80,7 +80,7 @@ router.get('/sendHighlights', function(req, res) {
         urlRecords = JSON.parse(urlRecords);
         console.log(urlRecords)
 
-        var friendList = getFriendList()
+        //var friendList = getFriendList()
 
         var result = []
 
