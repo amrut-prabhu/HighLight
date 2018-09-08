@@ -4,6 +4,7 @@ var passport = require('passport')
 var User = require('../config/mongoose_setup');
 var TextInfo = require('../config/mongoose_setup2');
 var request = require('request');
+var fuzz = require('fuzzball')
 
 /* GET home page. */
 router.get('/', isNotLoggedIn, function(req, res, next) {
@@ -53,41 +54,97 @@ router.get('/sendHighlights', function(req, res) {
         urlRecords = JSON.parse(urlRecords);
         console.log(urlRecords)
 
-        //Filtering
-        for(var i = 0; i < urlRecords.length; i++) {
-            for(var j = i + 1; j < urlRecords.length; j++) {
-                if(urlRecords[i].selectedText == urlRecords[j].selectedText) {
-                    urlRecords.splice(j, 1)
+        var result = []
 
+        console.log("Filtering");
+        var denom = 0
+        for(var i = 0; i < urlRecords.length; i++) {
+            result[urlRecords[i].selectedText] = 1
+            for(var j = i + 1; j < urlRecords.length; j++) {
+                console.log("Comparing " + urlRecords[i].selectedText  + " and " + urlRecords[j].selectedText)
+                if(urlRecords[i].selectedText === urlRecords[j].selectedText) {
+                    console.log("Matched!")
+                    urlRecords.splice(j, 1)
+                    result[urlRecords[i].selectedText]++;
+                    j--
                 }
             }
+            denom += result[urlRecords[i].selectedText]
         }
 
-        var result = []
+        var threshold = Math.floor(0.1 * denom)
+        console.log(denom)
+        for (var key in result) {
+            console.log(key)
+            result[key] = result[key] > threshold ? result[key] : undefined
+        }
+
+        console.log(result)
+
+        console.log("Eliminating substrings")
         for(var i = 0; i < urlRecords.length; i++) {
             var record = urlRecords[i]
-            var matches = 1;
-            for (var j = 0; j < urlRecords.length; j++) {
+            for (var j = i + 1; j < urlRecords.length; j++) {
                 var otherRecord = urlRecords[j]
                 console.log("Comparing " + record.selectedText  + " and " + otherRecord.selectedText)
-                if(otherRecord.selectedText.indexOf(record.selectedText) !== -1 && i !== j) {
+                if(record.selectedText.indexOf(otherRecord.selectedText) !== -1) {
                     console.log("Matched!")
-                    matches++
+                    result[record.selectedText]++
+                    result[otherRecord.selectedText] = undefined
+                    urlRecords.splice(j, 1)
+                    j--;
                 }
             }
-            result.push({text: record.selectedText, matches: matches})
         }
-        result = result.filter(function(elem, pos) {
-            return result.indexOf(elem) == pos;
-        })
-        var ratio = Math.max(...result.map((r) => r.matches)) / 100
-        for (var i = 0; i < result.length; i++) {
-            result[i].intensity = Math.round(result[i].matches / ratio);
+
+        console.log(result)
+
+        console.log("Intersection")
+        for(var i = 0; i < urlRecords.length; i++) {
+            var record = urlRecords[i]
+            var breaker = false
+            for (var j = i + 1; j < urlRecords.length; j++) {
+                var otherRecord = urlRecords[j]
+                console.log("Comparing " + record.selectedText  + " and " + otherRecord.selectedText)
+                if(fuzz.token_set_ratio(record.selectedText, otherRecord.selectedText) > 55) {
+                    if(result[record.selectedText] > result[otherRecord.selectedText]) {
+                        result[record.selectedText]++
+                        result[otherRecord.selectedText] = undefined
+                        urlRecords.splice(j, 1)
+                        j--
+                    } else {
+                        result[otherRecord.selectedText]++
+                        result[record.selectedText] = undefined
+                        urlRecords.splice(i, 1)
+                        i--
+                        breaker = true
+                    }
+                }
+                if(breaker) {
+                    break
+                }
+            }
         }
-        result.sort((r1, r2) => r1.intensity - r2.intensity)
-        res.send(result)
+
+        console.log(result)
+        
+        var final_result = []
+        var ratio = 1
+        for (var key in result) {
+            if (result[key] !== undefined) {
+                if(result[key] >= ratio) {
+                    ratio = result[key]
+                }                
+                final_result.push({"text": key, "matches": result[key]})
+            }
+        }
+        for(var json of final_result) {
+            json.intensity = json.matches / ratio
+        }
+        console.log(final_result)
+        res.send(final_result)
     })
-})  
+}) 
 
 
 
