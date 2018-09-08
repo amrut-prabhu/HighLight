@@ -39,7 +39,8 @@ router.get('/getText', function(req, res) {
       url:     'https://api.mlab.com/api/1/databases/textinfo/collections/local?apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV',
       body:    JSON.stringify({username: req.query.username || "LOL", selectedText: req.query.selectedText || "LOL LOL2 LOL", url: req.query.url || "LOL"})
     }, function(error, response, body){
-      res.send(200)
+        if(error) res.send(error)
+        res.send(200)
     });
 });
 
@@ -51,6 +52,17 @@ router.get('/sendHighlights', function(req, res) {
         // console.log(body)
         urlRecords = JSON.parse(urlRecords);
         console.log(urlRecords)
+
+        //Filtering
+        for(var i = 0; i < urlRecords.length; i++) {
+            for(var j = i + 1; j < urlRecords.length; j++) {
+                if(urlRecords[i].selectedText == urlRecords[j].selectedText) {
+                    urlRecords.splice(j, 1)
+
+                }
+            }
+        }
+
         var result = []
         for(var i = 0; i < urlRecords.length; i++) {
             var record = urlRecords[i]
