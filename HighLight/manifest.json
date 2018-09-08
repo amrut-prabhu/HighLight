@@ -1,35 +1,32 @@
 {
-  "name": "Fb-hack extension",
-  "description" : "Community-driven Highlights",
-  "version": "1.0",
-  "manifest_version": 2,
-  "browser_action" : {
-    "default_popup": "about_us.html",
-    "default_icon": "assets/images/icon.png"
-  },
-  "content_scripts": [
-    {
-      "matches": ["http://*.wikipedia.com/*"],
-
-      "exclude_matches": ["*://*.facebook.com/*",
-        "*://*.twitter.com/*",
-        "*://*.youtube.com/*",
-        "*://*.whatsapp.com/*",
-        "*://*mail.google.com/*"],
-
-      "js": ["script.js"],
-
-      "css": ["assets/stylesheets/main.css"]
-    }
-  ],
-  "commands": {
-    "_execute_browser_action": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+F",
-        "mac": "MacCtrl+Shift+5"
-      },
-      "description": "Opens hello.html"
-    }
-  }
+    "name": "HighLight",
+    "description": "Fb-hack project",
+    "version": "0.1",
+    "manifest_version":2,
+    "permissions": [
+    "tabs","<all_urls>"
+    ],
+    "browser_action": {
+        "default_icon": "assets/images/icon.png",
+        "default_popup": "about_us.html"
+    },
+    "content_scripts": [
+        {
+        "matches": [
+            "http://*/*",
+            "https://*/*"
+            ],
+        "exclude_matches": [
+            "*://*.facebook.com/*",
+            "*://*.twitter.com/*",
+            "*://*.youtube.com/*",
+            "*://*.whatsapp.com/*",
+            "*://*.mail.google.com/*"
+        ],
+        "js": ["content.js"],
+        "css": ["assets/stylesheets/main.css"],
+        "run_at": "document_end"
+        }
+    ]
 }
 
