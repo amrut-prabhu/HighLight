@@ -4,9 +4,12 @@
   ========================================
 */
 const HEROKU_APP = "https://fbhackbackend.herokuapp.com";
+const URL_GET_PARAMETER = "/sendHighlights?url=";
 
 const USERNAME_PARAMETER = "/getText?username=";
-const SELECTED_TEXT_PARAMETER = ",selectedText=";
+const SELECTED_TEXT_PARAMETER = "&selectedText=";
+const URL_POST_PARAMETER = "&url=";
+
 var testUserName = "test";
 
 /*
@@ -46,7 +49,9 @@ function sendSelectionText() {
     var selectedText = getSelectedText();
     if (selectedText) {
         console.log("Selected: " + selectedText);
-        var response = getFromServer(HEROKU_APP + USERNAME_PARAMETER + testUserName + SELECTED_TEXT_PARAMETER + selectedText);
+        var currUrl = window.location.href;
+        var response = getFromServer(HEROKU_APP + USERNAME_PARAMETER + testUserName
+            + SELECTED_TEXT_PARAMETER + selectedText + URL_POST_PARAMETER + currUrl);
         // response == "200 OK"
     }
 }
@@ -57,8 +62,6 @@ function sendSelectionText() {
   Highlighting Text functions
   ========================================
 */
-
-const URL_PARAMETER = "?par=";
 
 /**
  * {@param Integer} intensity Intensity of the highlight
@@ -103,7 +106,7 @@ function highlightTexts(textObjects) {
  */
 function getTextsToHighlight() {
     var currUrl = window.location.href;
-    var response = getFromServer(HEROKU_APP + URL_PARAMETER + currUrl);
+    var response = getFromServer(HEROKU_APP + URL_GET_PARAMETER + currUrl);
 
     var textObjects;
     // highlightTexts(textObjects);
