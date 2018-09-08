@@ -3,23 +3,59 @@
   Highlight Intensities according to importance
   ========================================
 */
-.highlight-imp1 {
-    background:  rgba(255, 255, 0, 0.2)
+/*
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+*/
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: rgba(211, 211, 211, 0.9);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 2px 0;
+    font-size: 20px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
 }
 
-.highlight-imp2 {
-    background:  rgba(255, 255, 0, 0.3)
+.tooltip:hover .tooltiptext {
+      visibility: visible;
+}
+<<<<<<< Updated upstream
+=======
+
+/*
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+*/
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: rgba(211, 211, 211, 0.9);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 2px 0;
+    font-size: 20px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
 }
 
-.highlight-imp3 {
-    background:  rgba(255, 255, 0, 0.4)
+.tooltip:hover .tooltiptext {
+      visibility: visible;
 }
-
-.highlight-imp4 {
-    background:  rgba(255, 255, 0, 0.55)
-}
-
-.highlight-imp5 {
-    background:  rgba(255, 255, 0, 0.85)
-}
-
+>>>>>>> Stashed changes
