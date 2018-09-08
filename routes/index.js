@@ -113,7 +113,7 @@ router.get('/sendHighlights', function(req, res) {
                 if(otherRecord === undefined)
                     continue
                 console.log("Comparing " + record.selectedText  + " AND " + otherRecord.selectedText)
-                if(fuzz.ratio(record.selectedText.trim(), otherRecord.selectedText.trim()) > 60) {
+                if(fuzz.ratio(record.selectedText.trim(), otherRecord.selectedText.trim()) > 50) {
                     console.log("Fuzzy selected")
                     if(result[record.selectedText] > result[otherRecord.selectedText]) {
                         console.log("Removing " + otherRecord.selectedText)
