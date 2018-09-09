@@ -93,10 +93,8 @@ router.get('/getText', function(req, res) {
 });
 
 function getFriendList(username) {
-    User.findOne({'local.username': username }, 'local.friends', (err, res) => {
-        console.log(res.local.friends)
-        return res.local.friends
-    })     
+    console.log("Stuff")
+        
 }
 
 router.get('/sendHighlights', function(req, res) {
@@ -108,8 +106,9 @@ router.get('/sendHighlights', function(req, res) {
         urlRecords = JSON.parse(urlRecords);
         console.log(urlRecords)
 
-        var friendList = getFriendList(req.query.username) || []
-        console.log("FriendList: " + friendList)
+        User.findOne({'local.username': req.query.username }, 'local.friends', (err, res2) => {
+
+        var friendList = res2 == null ? [] : res2.local.friends
 
         var result = []
 
@@ -240,6 +239,8 @@ router.get('/sendHighlights', function(req, res) {
         }
         console.log(final_result)
         res.send(final_result)
+
+        });
     })
 }) 
 
