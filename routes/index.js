@@ -20,7 +20,9 @@ router.get('/signup', isNotLoggedIn, function(req, res, next) {
 });
 
 router.get('/joinGroup', function(req, res) {
-    User.findOne({'local.username':req.query.username}, function(err, user) {
+    //console.log(req.query.username)
+    User.findOne({'local.username': req.query.username}, function(err, user) {
+        console.log(user)
         user.local.groups.push(req.query.groupName)
         user.save((err, savedUser) => {
             if(err) 
@@ -42,6 +44,8 @@ router.get('/joinGroup', function(req, res) {
                                     res.send()  
                                 })
                             })
+                        } else {
+                            res.send()  
                         }
                     })
                 })
@@ -51,7 +55,7 @@ router.get('/joinGroup', function(req, res) {
 
 router.get('/logout', function(req, res) {
 
-        User.findOne({ 'local.username' :  req.user.local.username }, function(err, user) {
+        User.find({ 'local.username' :  req.user.local.username }, function(err, user) {
             user.local.loggedIn = false;
             user.save((err) => {
                 if(err) 
@@ -64,13 +68,13 @@ router.get('/logout', function(req, res) {
     });
 
 router.get('/createUser', function(req, res) {
-    User.findOne({'local.username': req.query.username}, 'local.username', (err, user) => {
+    User.find({'local.username': req.query.username.toString()}, 'local.username', (err, user) => {
         console.log(user)
         if(!user) {
             request.post({
               headers: {'content-type' : 'application/json'},
               url:     'https://api.mlab.com/api/1/databases/textinfo/collections/users?apiKey=IugYRqr7D5Wf1pBgxxDhdPysWbzblmnV',
-              body:    JSON.stringify({username: req.query.username, groups: [], friends: []})
+              body:    JSON.stringify({username: req.query.username.toString(), groups: [], friends: []})
             }, function(error, response, body){
                 if(error) res.send(error)
                 res.send(200)
@@ -106,7 +110,7 @@ router.get('/sendHighlights', function(req, res) {
         urlRecords = JSON.parse(urlRecords);
         console.log(urlRecords)
 
-        User.findOne({'local.username': req.query.username }, 'local.friends', (err, res2) => {
+        User.find({'local.username': req.query.username.toString() }, 'local.friends', (err, res2) => {
 
         var friendList = res2 == null ? [] : res2.local.friends
 
