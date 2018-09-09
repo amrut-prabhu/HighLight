@@ -112,6 +112,8 @@ router.get('/sendHighlights', function(req, res) {
 
         User.find({'local.username': req.query.username.toString() }, 'local.friends', (err, res2) => {
 
+        if(err) throw err
+
         var friendList = res2 == null ? [] : res2.local.friends
 
         var result = []
@@ -245,6 +247,8 @@ router.get('/sendHighlights', function(req, res) {
         res.send(final_result)
 
         });
+
+        res.send()
     })
 }) 
 
