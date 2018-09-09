@@ -167,6 +167,8 @@ function highlightTexts() {
     for (var i = 0; i < textObjects.length; i++) {
       highlight(textObjects[i].text, textObjects[i].intensity, textObjects[i].matches, textObjects[i].friendMatches);
     }
+
+    document.innerHTML += "<LOL> </LOL>";
   } catch (err) {
     console.log("===" + err.message);
     document.designMode = "off";

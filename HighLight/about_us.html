@@ -19,13 +19,22 @@
     <form onsubmit="join_group(); return false;">
       <label for="Join Group"> Join group: </label>
       <input id="join_group" type="text" required="true" placeholder="Name of the group">
-      <input id="submit_btn" type="submit" value="Join" class="btn btn-success">
+      <input id="join_submit_btn" type="submit" value="Join" class="btn btn-success">
     </form>
     <br>
     <form onsubmit="create_group(); return false;">
       <label for="Create Group"> Create group: </label>
       <input id="create_group" type="text" required="true" placeholder="Name of the group">
-      <input id="submit_btn" type="submit" value="Create" class="btn btn-success">
+      <!-- <input id="create_submit_btn" type="submit" value="Create" class="btn btn-success"> -->
+      <button class="createGrp" id="create_submit_btn" >Create</button> '
+
     </form>
+
+    <script>
+      var joinBtn = document.getElementById('join_submit_btn');
+      btn.addEventListener('click', function(){
+        alert("fjdcnk");
+      });
+    </script>
   </body>
 </html>
