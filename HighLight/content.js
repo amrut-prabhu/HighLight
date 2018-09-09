@@ -23,7 +23,9 @@ var user_id = 1;
 
 chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
   user_id = response.user_id;
+  highlightTexts();
 });
+// Adds highlights to important text when the webpage is loaded
 
 /*
   ========================================
@@ -31,8 +33,6 @@ chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
   ========================================
   */
 
-// Adds highlights to important text when the webpage is loaded
-highlightTexts();
 
 // EVent handler
 document.onmouseup = sendSelectionText;
