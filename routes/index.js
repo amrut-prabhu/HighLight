@@ -68,7 +68,7 @@ router.get('/logout', function(req, res) {
     });
 
 router.get('/createUser', function(req, res) {
-    User.find({'local.username': req.query.username.toString()}, 'local.username', (err, user) => {
+    User.findOne({'local.username': req.query.username}, 'local.username', (err, user) => {
         console.log(user)
         if(!user) {
             request.post({
@@ -110,9 +110,11 @@ router.get('/sendHighlights', function(req, res) {
         urlRecords = JSON.parse(urlRecords);
         console.log(urlRecords)
 
-        User.find({'local.username': req.query.username.toString() }, 'local.friends', (err, res2) => {
+        User.findOne({'local.username': req.query.username}, 'local.friends', (err, res2) => {
 
         if(err) throw err
+
+        console.log(res2)
 
         var friendList = res2 == null ? [] : res2.local.friends
 
@@ -247,8 +249,6 @@ router.get('/sendHighlights', function(req, res) {
         res.send(final_result)
 
         });
-
-        res.send()
     })
 }) 
 
