@@ -11,7 +11,7 @@
 function sendUsername(user_id) {
   var xhr = new XMLHttpRequest();
 
-  xhr.open("GET", "https://fbhackbackend.herokuapp.com/createUser?username=" + user_id, false);
+  xhr.open("GET", "https://highlight007.herokuapp.com/createUser?username=" + user_id, false);
   xhr.send();
 
   console.log(url);
