@@ -4,7 +4,7 @@
   ========================================
   */
 // Request constants
-const HEROKU_APP = "https://highlight007.herokuapp.com";
+const HEROKU_APP = "https://fbhackbackend.herokuapp.com";
 const URL_GET_PARAMETER = "/sendHighlights?url=";
 const USERNAME_PARAMETER = "/getText?username=";
 const SELECTED_TEXT_PARAMETER = "&selectedText=";
@@ -123,7 +123,7 @@ function addTooltip(text, intensityColor, matches, friends) {
  * {@param Integer} matches Number of times the text has been selected
  */
 function highlight(text, intensity, matches, friends) {
-  let intensityColor  = (friends > 0 ? "#a5c6ff" : getIntensityColor(intensity));
+  let intensityColor  = (friends > 0 ? "#77ff99" : getIntensityColor(intensity));
 
   if (window.find(text, isCaseSensitive, isBackwards, isWrapAround)) {
     console.log("Text found");
